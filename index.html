@@ -7,7 +7,7 @@
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2563eb">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
- <style>
+  <style>
     :root {
       --bg-primary: #2563eb;
       --bg-page: #f7f8fa;
@@ -52,8 +52,7 @@
       padding: 3px 8px; border-radius: 12px;
     }
     #night-toggle {
-      background: rgba(255,255,255,0.15);
-      border: none; color: white;
+      background: rgba(255,255,255,0.15); border: none; color: white;
       padding: 4px 10px; border-radius: 12px;
       font-size: 14px; cursor: pointer;
     }
@@ -67,8 +66,8 @@
     }
     #search-input {
       flex: 1; padding: 10px 14px;
-      border: 1px solid var(--input-border);
-      border-radius: 8px; font-size: 15px; outline: none;
+      border: 1px solid var(--input-border); border-radius: 8px;
+      font-size: 15px; outline: none;
       background: var(--bg-bar); color: var(--text-main);
     }
     #search-input:focus { border-color: #2563eb; }
@@ -160,15 +159,13 @@
       display: flex; align-items: center; gap: 8px;
       font-size: 14px; cursor: pointer;
       padding: 8px 10px; border-radius: 8px;
-      border: 1px solid var(--border);
-      color: var(--text-main);
+      border: 1px solid var(--border); color: var(--text-main);
     }
     #poi-categories label:hover { background: var(--result-hover); }
     #poi-categories input:checked + span { font-weight: 600; }
     #poi-actions { display: flex; gap: 8px; }
     #poi-search-btn {
-      flex: 1; padding: 10px;
-      background: #d97706; color: white;
+      flex: 1; padding: 10px; background: #d97706; color: white;
       border: none; border-radius: 8px;
       font-size: 14px; font-weight: 600; cursor: pointer;
     }
@@ -178,7 +175,6 @@
       color: var(--text-muted); border: none;
       border-radius: 8px; font-size: 14px; cursor: pointer;
     }
-    #poi-clear-btn:hover { background: var(--border); }
     #poi-close-btn {
       padding: 10px 16px; background: var(--bg-panel);
       color: var(--text-muted); border: 1px solid var(--border);
@@ -188,12 +184,13 @@
 </head>
 <body>
 
- <div id="header">
+  <div id="header">
     <span>🧭 Mynav</span>
     <div id="header-right">
       <button id="night-toggle">🌙</button>
       <span id="radar-count">Chargement radars...</span>
     </div>
+  </div>
 
   <div id="search-bar">
     <input type="text" id="search-input" placeholder="Rechercher une adresse..." />
@@ -203,18 +200,9 @@
   </div>
 
   <div id="options-bar">
-    <label>
-      <input type="checkbox" id="avoid-tolls" checked />
-      Éviter péages
-    </label>
-    <label>
-      <input type="checkbox" id="avoid-highways" />
-      Éviter autoroutes
-    </label>
-    <label id="radar-toggle-label">
-      <input type="checkbox" id="show-radars" checked />
-      📷 Radars
-    </label>
+    <label><input type="checkbox" id="avoid-tolls" checked /> Éviter péages</label>
+    <label><input type="checkbox" id="avoid-highways" /> Éviter autoroutes</label>
+    <label id="radar-toggle-label"><input type="checkbox" id="show-radars" checked /> 📷 Radars</label>
   </div>
 
   <div id="map"></div>
@@ -248,29 +236,24 @@
 
   <script>
     // =============================================
-    // CONFIGURATION
-    // Remplace COLLE_TA_CLE_ICI par ta clé ORS
+    // CONFIGURATION — remplace COLLE_TA_CLE_ICI
     // =============================================
-    const ORS_API_KEY  = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImE0NmEzNDJjZjkyODQwMDA4MjhjZGE2YmM2ZWIyZWRkIiwiaCI6Im11cm11cjY0In0=';
-    const ALERT_DIST   = 800;
+    const ORS_API_KEY  = 'COLLE_TA_CLE_ICI';
+    const ALERT_DIST   = 500;
     const POI_RADIUS   = 5000;
     const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+    const NIGHT_START  = 20;
+    const NIGHT_END    = 7;
+
+    // === CARTE ===
+    const map = L.map('map').setView([46.603354, 1.888334], 6);
 
     // === MODE NUIT ===
-    const NIGHT_START = 20; // heure de début mode nuit
-    const NIGHT_END   = 7;  // heure de fin mode nuit
-
-    let tileLayer = null;
-
     const TILES = {
-      day:   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      night: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      day:   { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',               attr: '© OpenStreetMap' },
+      night: { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',    attr: '© OpenStreetMap © CartoDB' }
     };
-
-    const TILE_ATTR = {
-      day:   '© OpenStreetMap',
-      night: '© OpenStreetMap © CartoDB'
-    };
+    let tileLayer = null;
 
     function isNightTime() {
       const h = new Date().getHours();
@@ -281,13 +264,11 @@
       document.body.classList.toggle('night', night);
       document.getElementById('night-toggle').textContent = night ? '☀️' : '🌙';
       if (tileLayer) map.removeLayer(tileLayer);
-      tileLayer = L.tileLayer(night ? TILES.night : TILES.day, {
-        attribution: night ? TILE_ATTR.night : TILE_ATTR.day,
-        maxZoom: 19
-      }).addTo(map);
+      const t = night ? TILES.night : TILES.day;
+      tileLayer = L.tileLayer(t.url, { attribution: t.attr, maxZoom: 19 }).addTo(map);
     }
 
-    // Application initiale du thème
+    // Thème initial
     applyTheme(isNightTime());
 
     // Bouton manuel
@@ -298,9 +279,6 @@
     // Vérification automatique toutes les minutes
     setInterval(() => applyTheme(isNightTime()), 60000);
 
-    // === CARTE ===
-    const map = L.map('map').setView([46.603354, 1.888334], 6);
-    
     // === DOM ===
     const statusEl     = document.getElementById('status');
     const searchInput  = document.getElementById('search-input');
@@ -426,16 +404,13 @@
         (pos) => {
           const lat = pos.coords.latitude, lon = pos.coords.longitude;
           userPosition = [lat, lon];
-         const heading = pos.coords.heading;
+          const heading  = pos.coords.heading;
           const rotation = (heading !== null && !isNaN(heading)) ? heading : 0;
-          const carIcon = L.divIcon({
+          const carIcon  = L.divIcon({
             className: '',
             html: `<div style="font-size:28px;transform:rotate(${rotation}deg);transform-origin:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));line-height:1;">🚗</div>`,
-            iconSize: [32, 32],
-            iconAnchor: [16, 16],
-            popupAnchor: [0, -18]
+            iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-18]
           });
-
           if (!userMarker) {
             userMarker = L.marker([lat,lon], { icon: carIcon }).addTo(map).bindPopup('Votre position');
             map.setView([lat,lon], 14);
@@ -504,50 +479,31 @@
     async function calculateRoute() {
       if (!userPosition) { showStatus('Position GPS non disponible', 3000); return; }
       if (!destination)  { showStatus('Destination non définie', 3000); return; }
-
       routeBtn.disabled = true; routeBtn.textContent = '...';
       if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
-
       const avoidFeatures = [];
       if (avoidTolls.checked) avoidFeatures.push('tollways');
       if (avoidHwy.checked)   avoidFeatures.push('highways');
-
       const body = {
-        coordinates: [
-          [userPosition[1], userPosition[0]],
-          [destination[1],  destination[0]]
-        ]
+        coordinates: [[userPosition[1],userPosition[0]],[destination[1],destination[0]]]
       };
       if (avoidFeatures.length) body.options = { avoid_features: avoidFeatures };
-
       try {
         const res = await fetch(
           'https://api.openrouteservice.org/v2/directions/driving-car/geojson',
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': ORS_API_KEY,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-          }
+          { method:'POST', headers:{'Authorization':ORS_API_KEY,'Content-Type':'application/json'}, body:JSON.stringify(body) }
         );
         if (!res.ok) throw new Error('ORS API ' + res.status);
-        const data = await res.json();
+        const data  = await res.json();
         const route = data.features[0];
-        const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
-
-        routeLayer = L.polyline(coords, {
-          color: '#2563eb', weight: 5, opacity: 0.8
-        }).addTo(map);
-        map.fitBounds(routeLayer.getBounds(), { padding: [50,50] });
-
-        const distKm = (route.properties.summary.distance / 1000).toFixed(1);
-        const durMin = Math.round(route.properties.summary.duration / 60);
-        const h = Math.floor(durMin / 60), m = durMin % 60;
-        routeInfo.innerHTML = `<strong>${distKm} km</strong> — ${h>0 ? h+'h '+m+'min' : m+' min'}`;
+        const coords = route.geometry.coordinates.map(c => [c[1],c[0]]);
+        routeLayer = L.polyline(coords, { color:'#2563eb', weight:5, opacity:0.8 }).addTo(map);
+        map.fitBounds(routeLayer.getBounds(), { padding:[50,50] });
+        const distKm = (route.properties.summary.distance/1000).toFixed(1);
+        const durMin = Math.round(route.properties.summary.duration/60);
+        const h = Math.floor(durMin/60), m = durMin%60;
+        routeInfo.innerHTML = `<strong>${distKm} km</strong> — ${h>0?h+'h '+m+'min':m+' min'}`;
         routeInfo.style.display = 'block';
-
       } catch(e) {
         showStatus('Erreur itinéraire : ' + e.message, 5000);
       } finally {
@@ -558,98 +514,63 @@
     // === POI VIA OVERPASS API ===
     async function searchPOI() {
       if (!userPosition) { showStatus('Position GPS non disponible', 3000); return; }
-      const selected = [...document.querySelectorAll('#poi-categories input:checked')]
-        .map(i => i.value);
+      const selected = [...document.querySelectorAll('#poi-categories input:checked')].map(i => i.value);
       if (!selected.length) { showStatus('Sélectionnez au moins une catégorie', 3000); return; }
-
-      poiSearchBtn.disabled = true;
-      poiSearchBtn.textContent = 'Recherche...';
+      poiSearchBtn.disabled = true; poiSearchBtn.textContent = 'Recherche...';
       poiMarkers.clearLayers();
-
       const [lat, lon] = userPosition;
-      const queries = selected.map(k =>
-        `${POI_CONFIG[k].query}(around:${POI_RADIUS},${lat},${lon});`
-      ).join('\n');
+      const queries = selected.map(k => `${POI_CONFIG[k].query}(around:${POI_RADIUS},${lat},${lon});`).join('\n');
       const overpassQuery = `[out:json][timeout:25];\n(\n${queries}\n);\nout body;`;
-
       try {
-        const res = await fetch(OVERPASS_URL, {
-          method: 'POST',
-          body: 'data=' + encodeURIComponent(overpassQuery)
-        });
+        const res = await fetch(OVERPASS_URL, { method:'POST', body:'data='+encodeURIComponent(overpassQuery) });
         if (!res.ok) throw new Error('Overpass ' + res.status);
         const data = await res.json();
         const elements = data.elements || [];
-
-        if (!elements.length) {
-          showStatus('Aucun POI trouvé dans ce rayon', 3000);
-          return;
-        }
-
+        if (!elements.length) { showStatus('Aucun POI trouvé dans ce rayon', 3000); return; }
         elements.forEach(el => {
           if (!el.lat || !el.lon) return;
           const tags = el.tags || {};
-
           let cfg = null;
-          if      (tags.amenity === 'fuel')        cfg = POI_CONFIG.fuel;
-          else if (tags.amenity === 'fast_food')   cfg = POI_CONFIG.fast_food;
-          else if (tags.amenity === 'restaurant')  cfg = POI_CONFIG.restaurant;
-          else if (tags.highway === 'services')    cfg = POI_CONFIG.services;
-          else if (tags.amenity === 'parking')     cfg = POI_CONFIG.parking;
-          else if (tags.tourism === 'hotel')       cfg = POI_CONFIG.hotel;
-          else if (tags.amenity === 'hospital')    cfg = POI_CONFIG.hospital;
-          else if (tags.aeroway === 'aerodrome')   cfg = POI_CONFIG.aerodrome;
+          if      (tags.amenity==='fuel')        cfg = POI_CONFIG.fuel;
+          else if (tags.amenity==='fast_food')   cfg = POI_CONFIG.fast_food;
+          else if (tags.amenity==='restaurant')  cfg = POI_CONFIG.restaurant;
+          else if (tags.highway==='services')    cfg = POI_CONFIG.services;
+          else if (tags.amenity==='parking')     cfg = POI_CONFIG.parking;
+          else if (tags.tourism==='hotel')       cfg = POI_CONFIG.hotel;
+          else if (tags.amenity==='hospital')    cfg = POI_CONFIG.hospital;
+          else if (tags.aeroway==='aerodrome')   cfg = POI_CONFIG.aerodrome;
           if (!cfg) return;
-
-          const name    = tags.name || cfg.label;
-          const dist    = Math.round(map.distance(userPosition, [el.lat, el.lon]));
-          const poiLat  = el.lat;
-          const poiLon  = el.lon;
-
-          // Popup avec bouton itinéraire
-          const popup = L.popup().setContent((() => {
+          const name   = tags.name || cfg.label;
+          const dist   = Math.round(map.distance(userPosition, [el.lat, el.lon]));
+          const poiLat = el.lat, poiLon = el.lon;
+          const popup  = L.popup().setContent((() => {
             const div = document.createElement('div');
             div.innerHTML = `<b>${cfg.icon} ${name}</b><br>${cfg.label}<br><small>à ${dist} m</small>`;
             const btn = document.createElement('button');
             btn.textContent = '🗺️ Itinéraire';
             btn.style.cssText = 'margin-top:8px;width:100%;padding:8px;background:#16a34a;color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;';
-            btn.onclick = () => {
-              destination = [poiLat, poiLon];
-              map.closePopup();
-              calculateRoute();
-            };
+            btn.onclick = () => { destination = [poiLat, poiLon]; map.closePopup(); calculateRoute(); };
             div.appendChild(btn);
             return div;
           })());
-
-          L.marker([el.lat, el.lon], { icon: createPoiIcon(cfg) })
-            .bindPopup(popup)
-            .addTo(poiMarkers);
+          L.marker([el.lat, el.lon], { icon: createPoiIcon(cfg) }).bindPopup(popup).addTo(poiMarkers);
         });
-
         showStatus(`${elements.length} POI trouvés`, 2000);
         poiPanel.style.display = 'none';
-
         const group = L.featureGroup([userMarker, ...poiMarkers.getLayers()]);
-        map.fitBounds(group.getBounds(), { padding: [40,40] });
-
+        map.fitBounds(group.getBounds(), { padding:[40,40] });
       } catch(e) {
         showStatus('Erreur POI : ' + e.message, 5000);
       } finally {
-        poiSearchBtn.disabled = false;
-        poiSearchBtn.textContent = '🔍 Rechercher';
+        poiSearchBtn.disabled = false; poiSearchBtn.textContent = '🔍 Rechercher';
       }
     }
 
-    function clearPOI() {
-      poiMarkers.clearLayers();
-      showStatus('POI effacés', 2000);
-    }
+    function clearPOI() { poiMarkers.clearLayers(); showStatus('POI effacés', 2000); }
 
     // === UTILITAIRES ===
     function showStatus(msg, duration) {
-      statusEl.textContent = msg;
-      statusEl.style.display = 'block';
+      statusEl.textContent = msg; statusEl.style.display = 'block';
       if (duration) setTimeout(() => statusEl.style.display = 'none', duration);
     }
 
@@ -658,7 +579,7 @@
     searchInput.onkeydown = (e) => { if (e.key==='Enter') searchAddress(searchInput.value); };
     routeBtn.onclick      = calculateRoute;
     poiBtn.onclick        = () => {
-      poiPanel.style.display = poiPanel.style.display === 'none' ? 'block' : 'none';
+      poiPanel.style.display = poiPanel.style.display==='none' ? 'block' : 'none';
       resultsDiv.style.display = 'none';
     };
     poiSearchBtn.onclick = searchPOI;
