@@ -491,7 +491,21 @@
 
           const name = tags.name || cfg.label;
           const dist = Math.round(map.distance(userPosition, [el.lat, el.lon]));
-          const popup = `<b>${cfg.icon} ${name}</b><br>${cfg.label}<br><small>à ${dist} m</small>`;
+          const poiLat = el.lat, poiLon = el.lon;
+          const popup = L.popup().setContent((() => {
+            const div = document.createElement('div');
+            div.innerHTML = `<b>${cfg.icon} ${name}</b><br>${cfg.label}<br><small>à ${dist} m</small>`;
+            const btn = document.createElement('button');
+            btn.textContent = '🗺️ Itinéraire';
+            btn.style.cssText = 'margin-top:8px;width:100%;padding:8px;background:#16a34a;color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;';
+            btn.onclick = () => {
+              destination = [poiLat, poiLon];
+              map.closePopup();
+              calculateRoute();
+            };
+            div.appendChild(btn);
+            return div;
+          })());
 
           L.marker([el.lat, el.lon], { icon: createPoiIcon(cfg) })
             .bindPopup(popup)
