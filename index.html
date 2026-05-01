@@ -66,6 +66,7 @@
  gap: 16px;
  font-size: 13px;
  border-bottom: 1px solid #e5e7eb;
+ flex-wrap: wrap;
  }
  #options-bar label {
  display: flex;
@@ -133,6 +134,12 @@
  }
  .result-item:hover { background: #f3f4f6; }
  .result-item:last-child { border-bottom: none; }
+
+ .radar-popup {
+ font-size: 13px;
+ line-height: 1.5;
+ }
+ .radar-popup b { color: #dc2626; }
  </style>
 </head>
 <body>
@@ -154,6 +161,10 @@
  <input type="checkbox" id="avoid-highways" />
  Éviter les autoroutes
  </label>
+ <label>
+ <input type="checkbox" id="show-radars" checked />
+ Afficher les radars
+ </label>
  </div>
 
  <div id="map"></div>
@@ -161,11 +172,15 @@
  <div id="route-info"></div>
  <div id="status">Recherche de votre position...</div>
 
+ <!-- Base radars (chargée avant le script principal) -->
+ <script src="radars.js"></script>
+
  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
  <script>
  // === CONFIGURATION ===
  const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImE0NmEzNDJjZjkyODQwMDA4MjhjZGE2YmM2ZWIyZWRkIiwiaCI6Im11cm11cjY0In0=';
+ const RADAR_DISPLAY_MIN_ZOOM = 10; // zoom minimal pour afficher les radars
 
  // === INITIALISATION CARTE ===
  const map = L.map('map').setView([46.603354, 1.888334], 6);
@@ -183,6 +198,7 @@
  const routeInfo = document.getElementById('route-info');
  const avoidTolls = document.getElementById('avoid-tolls');
  const avoidHighways = document.getElementById('avoid-highways');
+ const showRadars = document.getElementById('show-radars');
 
  // === ÉTAT ===
  let userMarker = null;
@@ -190,6 +206,7 @@
  let searchMarker = null;
  let destination = null;
  let routeLayer = null;
+ const radarsLayer = L.layerGroup().addTo(map);
 
  // === GÉOLOCALISATION ===
  if ('geolocation' in navigator) {
@@ -214,6 +231,53 @@
  { enableHighAccuracy: true, maximumAge: 5000 }
  );
  }
+
+ // === AFFICHAGE DES RADARS ===
+ function getRadarColor(type) {
+ if (type === 'ETVM') return '#f97316'; // orange
+ if (type === 'ETFR') return '#9333ea'; // violet
+ if (type === 'ETPN') return '#1e3a8a'; // bleu foncé
+ return '#dc2626'; // rouge (vitesse fixes : ETF, ETD, ETT, ETU)
+ }
+
+ function refreshRadars() {
+ radarsLayer.clearLayers();
+
+ if (!showRadars.checked) return;
+ if (map.getZoom() < RADAR_DISPLAY_MIN_ZOOM) return;
+
+ const bounds = map.getBounds();
+ const visibleRadars = RADARS.filter(r =>
+ bounds.contains([r.lat, r.lon])
+ );
+
+ visibleRadars.forEach(r => {
+ const color = getRadarColor(r.t);
+ const marker = L.circleMarker([r.lat, r.lon], {
+ radius: 7,
+ fillColor: color,
+ color: 'white',
+ weight: 2,
+ opacity: 1,
+ fillOpacity: 0.9
+ });
+
+ const vmaText = r.v ? `<br>Vitesse limite : <b>${r.v} km/h</b>` : '';
+ const popup = `
+ <div class="radar-popup">
+ <b>${RADAR_TYPES[r.t] || r.t}</b><br>
+ ID : ${r.id}${vmaText}
+ </div>
+ `;
+ marker.bindPopup(popup);
+ radarsLayer.addLayer(marker);
+ });
+ }
+
+ // Rafraîchir les radars quand la carte bouge ou qu'on change le zoom
+ map.on('moveend', refreshRadars);
+ map.on('zoomend', refreshRadars);
+ showRadars.onchange = refreshRadars;
 
  // === RECHERCHE ADRESSE (NOMINATIM) ===
  async function searchAddress(query) {
@@ -277,7 +341,7 @@
  resultsDiv.style.display = 'none';
  }
 
- // === CALCUL D'ITINÉRAIRE (OPENROUTESERVICE) ===
+ // === CALCUL D'ITINÉRAIRE ===
  async function calculateRoute() {
  if (!userPosition) {
  showStatus('Position GPS non disponible', 3000);
@@ -292,14 +356,13 @@
  routeBtn.textContent = '...';
  if (routeLayer) map.removeLayer(routeLayer);
 
- // Construction des options "à éviter"
  const avoidFeatures = [];
  if (avoidTolls.checked) avoidFeatures.push('tollways');
  if (avoidHighways.checked) avoidFeatures.push('highways');
 
  const body = {
  coordinates: [
- [userPosition[1], userPosition[0]], // ORS attend [lon, lat]
+ [userPosition[1], userPosition[0]],
  [destination[1], destination[0]]
  ]
  };
@@ -324,9 +387,8 @@
 
  const data = await response.json();
  const route = data.features[0];
- const coords = route.geometry.coordinates.map(c => [c[1], c[0]]); // remet en [lat, lon]
+ const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
 
- // Trace la route
  routeLayer = L.polyline(coords, {
  color: '#2563eb',
  weight: 5,
@@ -335,7 +397,6 @@
 
  map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
 
- // Affiche distance et durée
  const distKm = (route.properties.summary.distance / 1000).toFixed(1);
  const durMin = Math.round(route.properties.summary.duration / 60);
  const heures = Math.floor(durMin / 60);
@@ -367,6 +428,9 @@
  };
  routeBtn.onclick = calculateRoute;
  map.on('click', () => resultsDiv.style.display = 'none');
+
+ // Affichage initial des radars une fois la carte centrée
+ setTimeout(refreshRadars, 1000);
  </script>
 
 </body>
