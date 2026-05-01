@@ -2,25 +2,87 @@
 <html lang="fr">
 <head>
  <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
  <title>Mynav</title>
+
+ <!-- Leaflet CSS -->
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
  <style>
- body {
- font-family: system-ui, sans-serif;
- background: #f7f8fa;
- color: #1a1a1a;
- max-width: 600px;
- margin: 60px auto;
- padding: 20px;
- text-align: center;
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ html, body { height: 100%; font-family: system-ui, sans-serif; }
+ #header {
+ background: #2563eb;
+ color: white;
+ padding: 12px 16px;
+ font-weight: 600;
+ font-size: 18px;
+ box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+ z-index: 1000;
+ position: relative;
  }
- h1 { color: #2563eb; }
- p { color: #555; }
+ #map {
+ height: calc(100vh - 50px);
+ width: 100%;
+ background: #f7f8fa;
+ }
+ #status {
+ position: absolute;
+ bottom: 16px;
+ left: 50%;
+ transform: translateX(-50%);
+ background: white;
+ padding: 8px 16px;
+ border-radius: 20px;
+ box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+ font-size: 13px;
+ color: #555;
+ z-index: 1000;
+ }
  </style>
 </head>
 <body>
- <h1>Mynav</h1>
- <p>Application de navigation en cours de construction.</p>
- <p>Version 0.1 — page de test</p>
+
+ <div id="header">Mynav</div>
+ <div id="map"></div>
+ <div id="status">Recherche de votre position...</div>
+
+ <!-- Leaflet JS -->
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+ <script>
+ // Initialisation de la carte centrée sur la France par défaut
+ const map = L.map('map').setView([46.603354, 1.888334], 6);
+
+ // Ajout des tuiles OpenStreetMap
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+ attribution: '© OpenStreetMap',
+ maxZoom: 19
+ }).addTo(map);
+
+ const status = document.getElementById('status');
+
+ // Géolocalisation
+ if ('geolocation' in navigator) {
+ navigator.geolocation.getCurrentPosition(
+ (position) => {
+ const lat = position.coords.latitude;
+ const lon = position.coords.longitude;
+ map.setView([lat, lon], 14);
+ L.marker([lat, lon]).addTo(map)
+ .bindPopup('Votre position')
+ .openPopup();
+ status.textContent = 'Position trouvée';
+ setTimeout(() => status.style.display = 'none', 2000);
+ },
+ (error) => {
+ status.textContent = 'Position indisponible : ' + error.message;
+ }
+ );
+ } else {
+ status.textContent = 'Géolocalisation non supportée par ce navigateur';
+ }
+ </script>
+
 </body>
 </html>
