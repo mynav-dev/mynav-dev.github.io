@@ -40,25 +40,43 @@
  font-size: 15px;
  outline: none;
  }
- #search-input:focus {
- border-color: #2563eb;
- }
+ #search-input:focus { border-color: #2563eb; }
 
- #search-btn {
- padding: 10px 20px;
+ #search-btn, #route-btn {
+ padding: 10px 16px;
  background: #2563eb;
  color: white;
  border: none;
  border-radius: 8px;
- font-size: 15px;
+ font-size: 14px;
  cursor: pointer;
  font-weight: 600;
+ white-space: nowrap;
  }
+ #route-btn { background: #16a34a; }
  #search-btn:hover { background: #1d4ed8; }
- #search-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+ #route-btn:hover { background: #15803d; }
+ button:disabled { background: #9ca3af !important; cursor: not-allowed; }
+
+ #options-bar {
+ background: #f3f4f6;
+ padding: 8px 12px;
+ display: flex;
+ align-items: center;
+ gap: 16px;
+ font-size: 13px;
+ border-bottom: 1px solid #e5e7eb;
+ }
+ #options-bar label {
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ cursor: pointer;
+ user-select: none;
+ }
 
  #map {
- height: calc(100vh - 110px);
+ height: calc(100vh - 158px);
  width: 100%;
  background: #f7f8fa;
  }
@@ -79,9 +97,24 @@
  text-align: center;
  }
 
+ #route-info {
+ position: absolute;
+ top: 158px;
+ left: 10px;
+ right: 10px;
+ background: white;
+ padding: 12px 16px;
+ border-radius: 8px;
+ box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+ z-index: 999;
+ display: none;
+ font-size: 14px;
+ }
+ #route-info strong { color: #2563eb; font-size: 16px; }
+
  #results {
  position: absolute;
- top: 110px;
+ top: 158px;
  left: 10px;
  right: 10px;
  background: white;
@@ -109,87 +142,103 @@
  <div id="search-bar">
  <input type="text" id="search-input" placeholder="Rechercher une adresse..." />
  <button id="search-btn">Chercher</button>
+ <button id="route-btn">Itinéraire</button>
+ </div>
+
+ <div id="options-bar">
+ <label>
+ <input type="checkbox" id="avoid-tolls" checked />
+ Éviter les péages
+ </label>
+ <label>
+ <input type="checkbox" id="avoid-highways" />
+ Éviter les autoroutes
+ </label>
  </div>
 
  <div id="map"></div>
  <div id="results"></div>
+ <div id="route-info"></div>
  <div id="status">Recherche de votre position...</div>
 
  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
  <script>
- const map = L.map('map').setView([46.603354, 1.888334], 6);
+ // === CONFIGURATION ===
+ const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImE0NmEzNDJjZjkyODQwMDA4MjhjZGE2YmM2ZWIyZWRkIiwiaCI6Im11cm11cjY0In0=';
 
+ // === INITIALISATION CARTE ===
+ const map = L.map('map').setView([46.603354, 1.888334], 6);
  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
  attribution: '© OpenStreetMap',
  maxZoom: 19
  }).addTo(map);
 
+ // === ÉLÉMENTS DOM ===
  const status = document.getElementById('status');
  const searchInput = document.getElementById('search-input');
  const searchBtn = document.getElementById('search-btn');
+ const routeBtn = document.getElementById('route-btn');
  const resultsDiv = document.getElementById('results');
+ const routeInfo = document.getElementById('route-info');
+ const avoidTolls = document.getElementById('avoid-tolls');
+ const avoidHighways = document.getElementById('avoid-highways');
 
+ // === ÉTAT ===
  let userMarker = null;
+ let userPosition = null;
  let searchMarker = null;
+ let destination = null;
+ let routeLayer = null;
 
- // Géolocalisation
+ // === GÉOLOCALISATION ===
  if ('geolocation' in navigator) {
- navigator.geolocation.getCurrentPosition(
+ navigator.geolocation.watchPosition(
  (position) => {
  const lat = position.coords.latitude;
  const lon = position.coords.longitude;
+ userPosition = [lat, lon];
+
+ if (!userMarker) {
+ userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Votre position');
  map.setView([lat, lon], 14);
- userMarker = L.marker([lat, lon]).addTo(map)
- .bindPopup('Votre position')
- .openPopup();
  status.textContent = 'Position trouvée';
  setTimeout(() => status.style.display = 'none', 2000);
+ } else {
+ userMarker.setLatLng([lat, lon]);
+ }
  },
  (error) => {
  status.textContent = 'Position indisponible : ' + error.message;
- }
+ },
+ { enableHighAccuracy: true, maximumAge: 5000 }
  );
- } else {
- status.textContent = 'Géolocalisation non supportée';
  }
 
- // Recherche d'adresse via Nominatim
+ // === RECHERCHE ADRESSE (NOMINATIM) ===
  async function searchAddress(query) {
  if (!query.trim()) return;
-
  searchBtn.disabled = true;
  searchBtn.textContent = '...';
  resultsDiv.style.display = 'none';
 
  try {
  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=fr&limit=5`;
- const response = await fetch(url, {
- headers: { 'Accept-Language': 'fr' }
- });
-
+ const response = await fetch(url, { headers: { 'Accept-Language': 'fr' } });
  if (!response.ok) throw new Error('Erreur réseau');
-
  const results = await response.json();
 
  if (results.length === 0) {
- status.textContent = 'Aucun résultat trouvé';
- status.style.display = 'block';
- setTimeout(() => status.style.display = 'none', 3000);
+ showStatus('Aucun résultat trouvé', 3000);
  return;
  }
-
- // Si 1 seul résultat, on y va directement
  if (results.length === 1) {
  selectResult(results[0]);
  } else {
- // Sinon on affiche la liste
  displayResults(results);
  }
-
  } catch (error) {
- status.textContent = 'Erreur de recherche : ' + error.message;
- status.style.display = 'block';
+ showStatus('Erreur de recherche : ' + error.message, 4000);
  } finally {
  searchBtn.disabled = false;
  searchBtn.textContent = 'Chercher';
@@ -211,35 +260,112 @@
  function selectResult(result) {
  const lat = parseFloat(result.lat);
  const lon = parseFloat(result.lon);
+ destination = [lat, lon];
 
- // Supprime ancien marqueur de recherche
  if (searchMarker) map.removeLayer(searchMarker);
 
- // Ajoute le nouveau marqueur (rouge)
  const redIcon = new L.Icon({
  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
- iconSize: [25, 41],
- iconAnchor: [12, 41],
- popupAnchor: [1, -34],
- shadowSize: [41, 41]
+ iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
  });
 
  searchMarker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
- .bindPopup(result.display_name)
- .openPopup();
+ .bindPopup(result.display_name).openPopup();
 
  map.setView([lat, lon], 16);
  resultsDiv.style.display = 'none';
  }
 
- // Événements
+ // === CALCUL D'ITINÉRAIRE (OPENROUTESERVICE) ===
+ async function calculateRoute() {
+ if (!userPosition) {
+ showStatus('Position GPS non disponible', 3000);
+ return;
+ }
+ if (!destination) {
+ showStatus('Recherchez d\'abord une destination', 3000);
+ return;
+ }
+
+ routeBtn.disabled = true;
+ routeBtn.textContent = '...';
+ if (routeLayer) map.removeLayer(routeLayer);
+
+ // Construction des options "à éviter"
+ const avoidFeatures = [];
+ if (avoidTolls.checked) avoidFeatures.push('tollways');
+ if (avoidHighways.checked) avoidFeatures.push('highways');
+
+ const body = {
+ coordinates: [
+ [userPosition[1], userPosition[0]], // ORS attend [lon, lat]
+ [destination[1], destination[0]]
+ ]
+ };
+ if (avoidFeatures.length > 0) {
+ body.options = { avoid_features: avoidFeatures };
+ }
+
+ try {
+ const response = await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson', {
+ method: 'POST',
+ headers: {
+ 'Authorization': ORS_API_KEY,
+ 'Content-Type': 'application/json'
+ },
+ body: JSON.stringify(body)
+ });
+
+ if (!response.ok) {
+ const errorText = await response.text();
+ throw new Error('API ORS : ' + response.status + ' — ' + errorText.substring(0, 100));
+ }
+
+ const data = await response.json();
+ const route = data.features[0];
+ const coords = route.geometry.coordinates.map(c => [c[1], c[0]]); // remet en [lat, lon]
+
+ // Trace la route
+ routeLayer = L.polyline(coords, {
+ color: '#2563eb',
+ weight: 5,
+ opacity: 0.8
+ }).addTo(map);
+
+ map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+
+ // Affiche distance et durée
+ const distKm = (route.properties.summary.distance / 1000).toFixed(1);
+ const durMin = Math.round(route.properties.summary.duration / 60);
+ const heures = Math.floor(durMin / 60);
+ const minutes = durMin % 60;
+ const dureeStr = heures > 0 ? `${heures}h ${minutes}min` : `${minutes} min`;
+
+ routeInfo.innerHTML = `<strong>${distKm} km</strong> — ${dureeStr}`;
+ routeInfo.style.display = 'block';
+
+ } catch (error) {
+ showStatus('Erreur itinéraire : ' + error.message, 5000);
+ } finally {
+ routeBtn.disabled = false;
+ routeBtn.textContent = 'Itinéraire';
+ }
+ }
+
+ // === UTILITAIRES ===
+ function showStatus(message, duration) {
+ status.textContent = message;
+ status.style.display = 'block';
+ if (duration) setTimeout(() => status.style.display = 'none', duration);
+ }
+
+ // === ÉVÉNEMENTS ===
  searchBtn.onclick = () => searchAddress(searchInput.value);
  searchInput.onkeydown = (e) => {
  if (e.key === 'Enter') searchAddress(searchInput.value);
  };
-
- // Fermer la liste si on clique ailleurs
+ routeBtn.onclick = calculateRoute;
  map.on('click', () => resultsDiv.style.display = 'none');
  </script>
 
