@@ -7,33 +7,69 @@
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2563eb">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <style>
+ <style>
+    :root {
+      --bg-primary: #2563eb;
+      --bg-page: #f7f8fa;
+      --bg-bar: white;
+      --bg-options: #f3f4f6;
+      --bg-panel: white;
+      --text-main: #1a1a1a;
+      --text-muted: #555;
+      --border: #e5e7eb;
+      --input-border: #d1d5db;
+      --result-hover: #f3f4f6;
+      --status-bg: white;
+    }
+    body.night {
+      --bg-primary: #1e293b;
+      --bg-page: #0f172a;
+      --bg-bar: #1e293b;
+      --bg-options: #162032;
+      --bg-panel: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --input-border: #475569;
+      --result-hover: #273549;
+      --status-bg: #1e293b;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: system-ui, sans-serif; }
 
     #header {
-      background: #2563eb; color: white;
+      background: var(--bg-primary); color: white;
       padding: 12px 16px; font-weight: 600; font-size: 18px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       z-index: 1000; position: relative;
       display: flex; align-items: center; justify-content: space-between;
     }
+    #header-right { display: flex; align-items: center; gap: 8px; }
     #radar-count {
       font-size: 12px; font-weight: 400;
       background: rgba(255,255,255,0.2);
       padding: 3px 8px; border-radius: 12px;
     }
+    #night-toggle {
+      background: rgba(255,255,255,0.15);
+      border: none; color: white;
+      padding: 4px 10px; border-radius: 12px;
+      font-size: 14px; cursor: pointer;
+    }
+    #night-toggle:hover { background: rgba(255,255,255,0.25); }
 
     #search-bar {
-      background: white; padding: 10px;
+      background: var(--bg-bar); padding: 10px;
       display: flex; gap: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       z-index: 999; position: relative;
     }
     #search-input {
       flex: 1; padding: 10px 14px;
-      border: 1px solid #d1d5db; border-radius: 8px;
-      font-size: 15px; outline: none;
+      border: 1px solid var(--input-border);
+      border-radius: 8px; font-size: 15px; outline: none;
+      background: var(--bg-bar); color: var(--text-main);
     }
     #search-input:focus { border-color: #2563eb; }
     #search-btn, #route-btn, #poi-btn {
@@ -50,10 +86,10 @@
     button:disabled   { background: #9ca3af !important; cursor: not-allowed; }
 
     #options-bar {
-      background: #f3f4f6; padding: 8px 12px;
+      background: var(--bg-options); padding: 8px 12px;
       display: flex; align-items: center; gap: 16px;
-      font-size: 13px; border-bottom: 1px solid #e5e7eb;
-      flex-wrap: wrap;
+      font-size: 13px; border-bottom: 1px solid var(--border);
+      color: var(--text-main); flex-wrap: wrap;
     }
     #options-bar label {
       display: flex; align-items: center;
@@ -61,14 +97,14 @@
     }
     #radar-toggle-label { color: #dc2626; font-weight: 600; }
 
-    #map { height: calc(100vh - 162px); width: 100%; background: #f7f8fa; }
+    #map { height: calc(100vh - 162px); width: 100%; background: var(--bg-page); }
 
     #status {
       position: absolute; bottom: 16px; left: 50%;
       transform: translateX(-50%);
-      background: white; padding: 8px 16px;
+      background: var(--status-bg); padding: 8px 16px;
       border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      font-size: 13px; color: #555;
+      font-size: 13px; color: var(--text-muted);
       z-index: 1000; max-width: 90%; text-align: center;
     }
 
@@ -85,35 +121,36 @@
 
     #route-info {
       position: absolute; bottom: 56px; left: 10px; right: 10px;
-      background: white; padding: 12px 16px;
+      background: var(--bg-panel); padding: 12px 16px;
       border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 999; display: none; font-size: 14px;
+      color: var(--text-main);
     }
     #route-info strong { color: #2563eb; font-size: 16px; }
 
     #results {
       position: absolute; top: 162px; left: 10px; right: 10px;
-      background: white; border-radius: 8px;
+      background: var(--bg-panel); border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       max-height: 300px; overflow-y: auto;
       z-index: 999; display: none;
     }
     .result-item {
-      padding: 12px 16px; border-bottom: 1px solid #e5e7eb;
-      cursor: pointer; font-size: 14px;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; font-size: 14px; color: var(--text-main);
     }
-    .result-item:hover { background: #f3f4f6; }
+    .result-item:hover { background: var(--result-hover); }
     .result-item:last-child { border-bottom: none; }
 
     #poi-panel {
       position: absolute; top: 162px; left: 10px; right: 10px;
-      background: white; border-radius: 12px;
+      background: var(--bg-panel); border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.15);
       z-index: 1000; display: none; padding: 16px;
     }
     #poi-panel h3 {
-      font-size: 15px; font-weight: 700; color: #1a1a1a;
-      margin-bottom: 12px;
+      font-size: 15px; font-weight: 700;
+      color: var(--text-main); margin-bottom: 12px;
     }
     #poi-categories {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -123,9 +160,10 @@
       display: flex; align-items: center; gap: 8px;
       font-size: 14px; cursor: pointer;
       padding: 8px 10px; border-radius: 8px;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border);
+      color: var(--text-main);
     }
-    #poi-categories label:hover { background: #f3f4f6; }
+    #poi-categories label:hover { background: var(--result-hover); }
     #poi-categories input:checked + span { font-weight: 600; }
     #poi-actions { display: flex; gap: 8px; }
     #poi-search-btn {
@@ -136,14 +174,15 @@
     }
     #poi-search-btn:hover { background: #b45309; }
     #poi-clear-btn {
-      padding: 10px 16px; background: #f3f4f6; color: #555;
-      border: none; border-radius: 8px; font-size: 14px; cursor: pointer;
+      padding: 10px 16px; background: var(--bg-options);
+      color: var(--text-muted); border: none;
+      border-radius: 8px; font-size: 14px; cursor: pointer;
     }
-    #poi-clear-btn:hover { background: #e5e7eb; }
+    #poi-clear-btn:hover { background: var(--border); }
     #poi-close-btn {
-      padding: 10px 16px; background: white; color: #555;
-      border: 1px solid #e5e7eb; border-radius: 8px;
-      font-size: 14px; cursor: pointer;
+      padding: 10px 16px; background: var(--bg-panel);
+      color: var(--text-muted); border: 1px solid var(--border);
+      border-radius: 8px; font-size: 14px; cursor: pointer;
     }
   </style>
 </head>
