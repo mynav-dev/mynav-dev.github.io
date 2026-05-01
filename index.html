@@ -346,13 +346,24 @@
         (pos) => {
           const lat = pos.coords.latitude, lon = pos.coords.longitude;
           userPosition = [lat, lon];
+         const heading = pos.coords.heading;
+          const rotation = (heading !== null && !isNaN(heading)) ? heading : 0;
+          const carIcon = L.divIcon({
+            className: '',
+            html: `<div style="font-size:28px;transform:rotate(${rotation}deg);transform-origin:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));line-height:1;">🚗</div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -18]
+          });
+
           if (!userMarker) {
-            userMarker = L.marker([lat,lon]).addTo(map).bindPopup('Votre position');
+            userMarker = L.marker([lat,lon], { icon: carIcon }).addTo(map).bindPopup('Votre position');
             map.setView([lat,lon], 14);
             statusEl.textContent = 'Position trouvée';
             setTimeout(() => statusEl.style.display = 'none', 2000);
           } else {
             userMarker.setLatLng([lat,lon]);
+            userMarker.setIcon(carIcon);
           }
           checkRadarProximity(lat, lon);
         },
