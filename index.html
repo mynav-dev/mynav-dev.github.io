@@ -21,18 +21,11 @@
       --result-hover: #f3f4f6;
       --status-bg: white;
     }
-    body.night {
-      --bg-primary: #1e293b;
-      --bg-page: #0f172a;
-      --bg-bar: #1e293b;
-      --bg-options: #162032;
-      --bg-panel: #1e293b;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --input-border: #475569;
-      --result-hover: #273549;
-      --status-bg: #1e293b;
+    body.night .leaflet-tile {
+      filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    }
+    body.night .leaflet-container {
+      background: #1a1a2e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
