@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mynav</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root {
+      --bg-primary: #2563eb;
+      --bg-page: #f7f8fa;
+      --bg-bar: white;
+      --bg-options: #f3f4f6;
+      --bg-panel: white;
+      --text-main: #1a1a1a;
+      --text-muted: #555;
+      --border: #e5e7eb;
+      --input-border: #d1d5db;
+      --result-hover: #f3f4f6;
+      --status-bg: white;
+    }
+    body.night {
+      --bg-primary: #1e293b;
+      --bg-page: #0f172a;
+      --bg-bar: #1e293b;
+      --bg-options: #162032;
+      --bg-panel: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --input-border: #475569;
+      --result-hover: #273549;
+      --status-bg: #1e293b;
+    }
+
+    /* Filtre nuit sur les tuiles carte uniquement */
+    body.night .leaflet-tile {
+      filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    }
+    body.night .leaflet-container {
+      background: #1a1a2e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, sans-serif; }
+
+    #header {
+      background: var(--bg-primary); color: white;
+      padding: 12px 16px; font-weight: 600; font-size: 18px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 1000; position: relative;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    #header-left { display: flex; align-items: center; gap: 8px; }
+    #header-right { display: flex; align-items: center; gap: 8px; }
+    #radar-count {
+      font-size: 12px; font-weight: 400;
+      background: rgba(255,255,255,0.2);
+      padding: 3px 8px; border-radius: 12px;
+    }
+    #night-toggle {
+      background: rgba(255,255,255,0.15); border: none; color: white;
+      padding: 4px 10px; border-radius: 12px;
+      font-size: 14px; cursor: pointer;
+    }
+    #night-toggle:hover { background: rgba(255,255,255,0.25); }
+
+    #search-bar {
+      background: var(--bg-bar); padding: 10px;
+      display: flex; gap: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      z-index: 999; position: relative;
+    }
+    #search-input {
+      flex: 1; padding: 10px 14px;
+      border: 1px solid var(--input-border); border-radius: 8px;
+      font-size: 15px; outline: none;
+      background: var(--bg-bar); color: var(--text-main);
+    }
+    #search-input:focus { border-color: #2563eb; }
+    #search-btn, #route-btn, #poi-btn {
+      padding: 10px 14px; color: white; border: none;
+      border-radius: 8px; font-size: 14px;
+      cursor: pointer; font-weight: 600; white-space: nowrap;
+    }
+    #search-btn { background: #2563eb; }
+    #route-btn  { background: #16a34a; }
+    #poi-btn    { background: #d97706; }
+    #search-btn:hover { background: #1d4ed8; }
+    #route-btn:hover  { background: #15803d; }
+    #poi-btn:hover    { background: #b45309; }
+    button:disabled   { background: #9ca3af !important; cursor: not-allowed; }
+
+    #options-bar {
+      background: var(--bg-options); padding: 8px 12px;
+      display: flex; align-items: center; gap: 16px;
+      font-size: 13px; border-bottom: 1px solid var(--border);
+      color: var(--text-main); flex-wrap: wrap;
+    }
+    #options-bar label {
+      display: flex; align-items: center;
+      gap: 6px; cursor: pointer; user-select: none;
+    }
+    #radar-toggle-label { color: #dc2626; font-weight: 600; }
+
+    #map { height: calc(100vh - 162px); width: 100%; background: var(--bg-page); }
+
+    #status {
+      position: absolute; bottom: 16px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--status-bg); padding: 8px 16px;
+      border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      font-size: 13px; color: var(--text-muted);
+      z-index: 1000; max-width: 90%; text-align: center;
+    }
+
+    #radar-alert {
+      position: absolute; top: 162px; left: 50%;
+      transform: translateX(-50%);
+      background: #dc2626; color: white;
+      padding: 12px 24px; border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(220,38,38,0.4);
+      font-size: 16px; font-weight: 700;
+      z-index: 1001; display: none;
+      text-align: center; white-space: nowrap;
+    }
+
+    #route-info {
+      position: absolute; bottom: 56px; left: 10px; right: 10px;
+      background: var(--bg-panel); padding: 12px 16px;
+      border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 999; display: none; font-size: 14px;
+      color: var(--text-main);
+    }
+    #route-info strong { color: #2563eb; font-size: 16px; }
+
+    #results {
+      position: absolute; top: 162px; left: 10px; right: 10px;
+      background: var(--bg-panel); border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-height: 300px; overflow-y: auto;
+      z-index: 999; display: none;
+    }
+    .result-item {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; font-size: 14px; color: var(--text-main);
+    }
+    .result-item:hover { background: var(--result-hover); }
+    .result-item:last-child { border-bottom: none; }
+
+    #poi-panel {
+      position: absolute; top: 162px; left: 10px; right: 10px;
+      background: var(--bg-panel); border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      z-index: 1000; display: none; padding: 16px;
+    }
+    #poi-panel h3 {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-main); margin-bottom: 12px;
+    }
+    #poi-categories {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; margin-bottom: 14px;
+    }
+    #poi-categories label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; cursor: pointer;
+      padding: 8px 10px; border-radius: 8px;
+      border: 1px solid var(--border); color: var(--text-main);
+    }
+    #poi-categories label:hover { background: var(--result-hover); }
+    #poi-categories input:checked + span { font-weight: 600; }
+    #poi-actions { display: flex; gap: 8px; }
+    #poi-search-btn {
+      flex: 1; padding: 10px; background: #d97706; color: white;
+      border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    #poi-search-btn:hover { background: #b45309; }
+    #poi-clear-btn {
+      padding: 10px 16px; background: var(--bg-options);
+      color: var(--text-muted); border: none;
+      border-radius: 8px; font-size: 14px; cursor: pointer;
+    }
+    #poi-close-btn {
+      padding: 10px 16px; background: var(--bg-panel);
+      color: var(--text-muted); border: 1px solid var(--border);
+      border-radius: 8px; font-size: 14px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header">
+    <div id="header-left">
+      <span>🧭 Mynav</span>
+      <span style="font-size:11px;font-weight:400;opacity:0.75;">by ManuelM</span>
+    </div>
+    <div id="header-right">
+      <button id="night-toggle">🌙</button>
+      <span id="radar-count">Chargement radars...</span>
+    </div>
+  </div>
+
+  <div id="search-bar">
+    <input type="text" id="search-input" placeholder="Rechercher une adresse..." />
+    <button id="search-btn">Chercher</button>
+    <button id="route-btn">Route</button>
+    <button id="poi-btn">📍 POI</button>
+  </div>
+
+  <div id="options-bar">
+    <label><input type="checkbox" id="avoid-tolls" checked /> Éviter péages</label>
+    <label><input type="checkbox" id="avoid-highways" /> Éviter autoroutes</label>
+    <label id="radar-toggle-label"><input type="checkbox" id="show-radars" checked /> 📷 Radars</label>
+  </div>
+
+  <div id="map"></div>
+  <div id="results"></div>
+
+  <div id="poi-panel">
+    <h3>📍 Points d'intérêt autour de moi (5 km)</h3>
+    <div id="poi-categories">
+      <label><input type="checkbox" value="fuel" checked /><span>⛽ Stations service</span></label>
+      <label><input type="checkbox" value="fast_food" checked /><span>🍔 Restauration rapide</span></label>
+      <label><input type="checkbox" value="restaurant" /><span>🍽️ Restaurants</span></label>
+      <label><input type="checkbox" value="services" /><span>🛣️ Aires autoroute</span></label>
+      <label><input type="checkbox" value="parking" /><span>🅿️ Parkings</span></label>
+      <label><input type="checkbox" value="hotel" /><span>🏨 Hôtels</span></label>
+      <label><input type="checkbox" value="hospital" /><span>🏥 Hôpitaux</span></label>
+      <label><input type="checkbox" value="aerodrome" /><span>✈️ Aéroports</span></label>
+    </div>
+    <div id="poi-actions">
+      <button id="poi-search-btn">🔍 Rechercher</button>
+      <button id="poi-clear-btn">🗑️ Effacer</button>
+      <button id="poi-close-btn">✕ Fermer</button>
+    </div>
+  </div>
+
+  <div id="radar-alert">📷 RADAR — <span id="alert-detail"></span></div>
+  <div id="route-info"></div>
+  <div id="status">Recherche de votre position...</div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="radars.js"></script>
+
+  <script>
+    // =============================================
+    // CONFIGURATION — remplace COLLE_TA_CLE_ICI
+    // =============================================
+    const ORS_API_KEY  = 'COLLE_TA_CLE_ICI';
+    const ALERT_DIST   = 500;
+    const POI_RADIUS   = 5000;
+    const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+    const NIGHT_START  = 20;
+    const NIGHT_END    = 7;
+
+    // === CARTE ===
+    const map = L.map('map').setView([46.603354, 1.888334], 6);
+
+    // === MODE NUIT ===
+    // Même URL jour et nuit — le filtre CSS fait le travail
+    let tileLayer = null;
+
+    function isNightTime() {
+      const h = new Date().getHours();
+      return h >= NIGHT_START || h < NIGHT_END;
+    }
+
+    function applyTheme(night) {
+      document.body.classList.toggle('night', night);
+      document.getElementById('night-toggle').textContent = night ? '☀️' : '🌙';
+      // On ne recharge les tuiles que si nécessaire
+      if (!tileLayer) {
+        tileLayer = L.tileLayer(
+          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          { attribution: '© OpenStreetMap', maxZoom: 19 }
+        ).addTo(map);
+      }
+    }
+
+    // Thème initial — APRES initialisation de la carte
+    applyTheme(isNightTime());
+
+    // Bouton manuel
+    document.getElementById('night-toggle').onclick = () => {
+      applyTheme(!document.body.classList.contains('night'));
+    };
+
+    // Vérification automatique toutes les minutes
+    setInterval(() => applyTheme(isNightTime()), 60000);
+
+    // === DOM ===
+    const statusEl     = document.getElementById('status');
+    const searchInput  = document.getElementById('search-input');
+    const searchBtn    = document.getElementById('search-btn');
+    const routeBtn     = document.getElementById('route-btn');
+    const poiBtn       = document.getElementById('poi-btn');
+    const resultsDiv   = document.getElementById('results');
+    const routeInfo    = document.getElementById('route-info');
+    const radarAlert   = document.getElementById('radar-alert');
+    const alertDetail  = document.getElementById('alert-detail');
+    const radarCount   = document.getElementById('radar-count');
+    const avoidTolls   = document.getElementById('avoid-tolls');
+    const avoidHwy     = document.getElementById('avoid-highways');
+    const showRadars   = document.getElementById('show-radars');
+    const poiPanel     = document.getElementById('poi-panel');
+    const poiSearchBtn = document.getElementById('poi-search-btn');
+    const poiClearBtn  = document.getElementById('poi-clear-btn');
+    const poiCloseBtn  = document.getElementById('poi-close-btn');
+
+    // === ÉTAT ===
+    let userPosition  = null;
+    let userMarker    = null;
+    let searchMarker  = null;
+    let destination   = null;
+    let routeLayer    = null;
+    let alertTimeout  = null;
+    let alertedRadars = new Set();
+    let radarMarkers  = L.layerGroup().addTo(map);
+    let poiMarkers    = L.layerGroup().addTo(map);
+
+    // === CONFIG POI ===
+    const POI_CONFIG = {
+      fuel:       { label: 'Station service',     icon: '⛽', color: '#f59e0b', query: 'node["amenity"="fuel"]' },
+      fast_food:  { label: 'Restauration rapide', icon: '🍔', color: '#ef4444', query: 'node["amenity"="fast_food"]' },
+      restaurant: { label: 'Restaurant',          icon: '🍽️', color: '#8b5cf6', query: 'node["amenity"="restaurant"]' },
+      services:   { label: 'Aire autoroute',      icon: '🛣️', color: '#0ea5e9', query: 'node["highway"="services"]' },
+      parking:    { label: 'Parking',             icon: '🅿️', color: '#64748b', query: 'node["amenity"="parking"]' },
+      hotel:      { label: 'Hôtel',               icon: '🏨', color: '#10b981', query: 'node["tourism"="hotel"]' },
+      hospital:   { label: 'Hôpital',             icon: '🏥', color: '#dc2626', query: 'node["amenity"="hospital"]' },
+      aerodrome:  { label: 'Aéroport',            icon: '✈️', color: '#1d4ed8', query: 'node["aeroway"="aerodrome"]' },
+    };
+
+    // === ICÔNES RADAR ===
+    const RADAR_COLORS = {
+      'ETF':'#dc2626','ETD':'#dc2626','ETT':'#dc2626',
+      'ETU':'#ea580c','ETVM':'#7c3aed','ETFR':'#0369a1','ETPN':'#047857'
+    };
+
+    function createRadarIcon(type) {
+      const color = RADAR_COLORS[type] || '#dc2626';
+      const lbl   = type==='ETVM'?'↔':type==='ETFR'?'🚦':type==='ETPN'?'PN':'📷';
+      return L.divIcon({
+        className: '',
+        html: `<div style="background:${color};width:26px;height:26px;border-radius:50%;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.35);">${lbl}</div>`,
+        iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0,-15]
+      });
+    }
+
+    function createPoiIcon(cfg) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="background:${cfg.color};width:30px;height:30px;border-radius:8px;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${cfg.icon}</div>`,
+        iconSize: [30,30], iconAnchor: [15,15], popupAnchor: [0,-18]
+      });
+    }
+
+    // === AFFICHAGE RADARS ===
+    function renderRadars() {
+      radarMarkers.clearLayers();
+      if (!showRadars.checked) { radarCount.textContent = 'Radars masqués'; return; }
+      const bounds = map.getBounds().pad(0.1);
+      let count = 0;
+      RADARS.forEach(r => {
+        if (!bounds.contains([r.lat, r.lon])) return;
+        L.marker([r.lat, r.lon], { icon: createRadarIcon(r.t) })
+          .bindPopup(`<b>${RADAR_TYPES[r.t]||r.t}</b><br>Limite : ${r.v ? r.v+' km/h' : 'N/A'}<br><small>ID : ${r.id}</small>`)
+          .addTo(radarMarkers);
+        count++;
+      });
+      radarCount.textContent = `${count} radar${count>1?'s':''} visibles`;
+    }
+
+    // === ALERTE RADAR ===
+    function checkRadarProximity(lat, lon) {
+      if (!showRadars.checked) return;
+      let nearest = null, nearestDist = Infinity;
+      RADARS.forEach(r => {
+        const d = map.distance([lat,lon],[r.lat,r.lon]);
+        if (d < ALERT_DIST && d < nearestDist) { nearestDist = d; nearest = r; }
+      });
+      if (nearest && !alertedRadars.has(nearest.id)) {
+        alertedRadars.add(nearest.id);
+        triggerAlert(nearest, Math.round(nearestDist));
+        setTimeout(() => alertedRadars.delete(nearest.id), 30000);
+      }
+    }
+
+    function triggerAlert(radar, dist) {
+      const vma = radar.v ? `${radar.v} km/h` : '';
+      alertDetail.textContent = `${RADAR_TYPES[radar.t]||radar.t}${vma?' · '+vma:''} · dans ${dist}m`;
+      radarAlert.style.display = 'block';
+      playBeep();
+      if (alertTimeout) clearTimeout(alertTimeout);
+      alertTimeout = setTimeout(() => radarAlert.style.display = 'none', 6000);
+    }
+
+    function playBeep() {
+      try {
+        const ctx  = new (window.AudioContext||window.webkitAudioContext)();
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = 880; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.8);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.8);
+      } catch(e) {}
+    }
+
+    // === GÉOLOCALISATION ===
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition(
+        (pos) => {
+          const lat = pos.coords.latitude, lon = pos.coords.longitude;
+          userPosition = [lat, lon];
+          const heading  = pos.coords.heading;
+          const rotation = (heading !== null && !isNaN(heading)) ? heading : 0;
+          const carIcon  = L.divIcon({
+            className: '',
+            html: `<div style="font-size:28px;transform:rotate(${rotation}deg);transform-origin:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));line-height:1;">🚗</div>`,
+            iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-18]
+          });
+          if (!userMarker) {
+            userMarker = L.marker([lat,lon], { icon: carIcon }).addTo(map).bindPopup('Votre position');
+            map.setView([lat,lon], 14);
+            statusEl.textContent = 'Position trouvée';
+            setTimeout(() => statusEl.style.display = 'none', 2000);
+          } else {
+            userMarker.setLatLng([lat,lon]);
+            userMarker.setIcon(carIcon);
+          }
+          checkRadarProximity(lat, lon);
+        },
+        (err) => { statusEl.textContent = 'Position indisponible : ' + err.message; },
+        { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+      );
+    }
+
+    // === RECHERCHE ADRESSE ===
+    async function searchAddress(query) {
+      if (!query.trim()) return;
+      searchBtn.disabled = true; searchBtn.textContent = '...';
+      resultsDiv.style.display = 'none';
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=fr&limit=5`,
+          { headers: {'Accept-Language':'fr'} }
+        );
+        const results = await res.json();
+        if (!results.length) { showStatus('Aucun résultat', 3000); return; }
+        if (results.length === 1) selectResult(results[0]);
+        else displayResults(results);
+      } catch(e) {
+        showStatus('Erreur : ' + e.message, 4000);
+      } finally {
+        searchBtn.disabled = false; searchBtn.textContent = 'Chercher';
+      }
+    }
+
+    function displayResults(results) {
+      resultsDiv.innerHTML = '';
+      results.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.textContent = r.display_name;
+        div.onclick = () => selectResult(r);
+        resultsDiv.appendChild(div);
+      });
+      resultsDiv.style.display = 'block';
+    }
+
+    function selectResult(result) {
+      const lat = parseFloat(result.lat), lon = parseFloat(result.lon);
+      destination = [lat, lon];
+      if (searchMarker) map.removeLayer(searchMarker);
+      const redIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25,41], iconAnchor: [12,41], popupAnchor: [1,-34], shadowSize: [41,41]
+      });
+      searchMarker = L.marker([lat,lon],{icon:redIcon}).addTo(map)
+        .bindPopup(result.display_name).openPopup();
+      map.setView([lat,lon], 16);
+      resultsDiv.style.display = 'none';
+    }
+
+    // === CALCUL ITINÉRAIRE ===
+    async function calculateRoute() {
+      if (!userPosition) { showStatus('Position GPS non disponible', 3000); return; }
+      if (!destination)  { showStatus('Destination non définie', 3000); return; }
+      routeBtn.disabled = true; routeBtn.textContent = '...';
+      if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
+      const avoidFeatures = [];
+      if (avoidTolls.checked) avoidFeatures.push('tollways');
+      if (avoidHwy.checked)   avoidFeatures.push('highways');
+      const body = {
+        coordinates: [[userPosition[1],userPosition[0]],[destination[1],destination[0]]]
+      };
+      if (avoidFeatures.length) body.options = { avoid_features: avoidFeatures };
+      try {
+        const res = await fetch(
+          'https://api.openrouteservice.org/v2/directions/driving-car/geojson',
+          { method:'POST', headers:{'Authorization':ORS_API_KEY,'Content-Type':'application/json'}, body:JSON.stringify(body) }
+        );
+        if (!res.ok) throw new Error('ORS API ' + res.status);
+        const data  = await res.json();
+        const route = data.features[0];
+        const coords = route.geometry.coordinates.map(c => [c[1],c[0]]);
+        routeLayer = L.polyline(coords, { color:'#2563eb', weight:5, opacity:0.8 }).addTo(map);
+        map.fitBounds(routeLayer.getBounds(), { padding:[50,50] });
+        const distKm = (route.properties.summary.distance/1000).toFixed(1);
+        const durMin = Math.round(route.properties.summary.duration/60);
+        const h = Math.floor(durMin/60), m = durMin%60;
+        routeInfo.innerHTML = `<strong>${distKm} km</strong> — ${h>0?h+'h '+m+'min':m+' min'}`;
+        routeInfo.style.display = 'block';
+      } catch(e) {
+        showStatus('Erreur itinéraire : ' + e.message, 5000);
+      } finally {
+        routeBtn.disabled = false; routeBtn.textContent = 'Route';
+      }
+    }
+
+    // === POI VIA OVERPASS API ===
+    async function searchPOI() {
+      if (!userPosition) { showStatus('Position GPS non disponible', 3000); return; }
+      const selected = [...document.querySelectorAll('#poi-categories input:checked')].map(i => i.value);
+      if (!selected.length) { showStatus('Sélectionnez au moins une catégorie', 3000); return; }
+      poiSearchBtn.disabled = true; poiSearchBtn.textContent = 'Recherche...';
+      poiMarkers.clearLayers();
+      const [lat, lon] = userPosition;
+      const queries = selected.map(k => `${POI_CONFIG[k].query}(around:${POI_RADIUS},${lat},${lon});`).join('\n');
+      const overpassQuery = `[out:json][timeout:25];\n(\n${queries}\n);\nout body;`;
+      try {
+        const res = await fetch(OVERPASS_URL, { method:'POST', body:'data='+encodeURIComponent(overpassQuery) });
+        if (!res.ok) throw new Error('Overpass ' + res.status);
+        const data = await res.json();
+        const elements = data.elements || [];
+        if (!elements.length) { showStatus('Aucun POI trouvé dans ce rayon', 3000); return; }
+        elements.forEach(el => {
+          if (!el.lat || !el.lon) return;
+          const tags = el.tags || {};
+          let cfg = null;
+          if      (tags.amenity==='fuel')        cfg = POI_CONFIG.fuel;
+          else if (tags.amenity==='fast_food')   cfg = POI_CONFIG.fast_food;
+          else if (tags.amenity==='restaurant')  cfg = POI_CONFIG.restaurant;
+          else if (tags.highway==='services')    cfg = POI_CONFIG.services;
+          else if (tags.amenity==='parking')     cfg = POI_CONFIG.parking;
+          else if (tags.tourism==='hotel')       cfg = POI_CONFIG.hotel;
+          else if (tags.amenity==='hospital')    cfg = POI_CONFIG.hospital;
+          else if (tags.aeroway==='aerodrome')   cfg = POI_CONFIG.aerodrome;
+          if (!cfg) return;
+          const name   = tags.name || cfg.label;
+          const dist   = Math.round(map.distance(userPosition, [el.lat, el.lon]));
+          const poiLat = el.lat, poiLon = el.lon;
+          const popup  = L.popup().setContent((() => {
+            const div = document.createElement('div');
+            div.innerHTML = `<b>${cfg.icon} ${name}</b><br>${cfg.label}<br><small>à ${dist} m</small>`;
+            const btn = document.createElement('button');
+            btn.textContent = '🗺️ Itinéraire';
+            btn.style.cssText = 'margin-top:8px;width:100%;padding:8px;background:#16a34a;color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;';
+            btn.onclick = () => { destination = [poiLat, poiLon]; map.closePopup(); calculateRoute(); };
+            div.appendChild(btn);
+            return div;
+          })());
+          L.marker([el.lat, el.lon], { icon: createPoiIcon(cfg) }).bindPopup(popup).addTo(poiMarkers);
+        });
+        showStatus(`${elements.length} POI trouvés`, 2000);
+        poiPanel.style.display = 'none';
+        const group = L.featureGroup([userMarker, ...poiMarkers.getLayers()]);
+        map.fitBounds(group.getBounds(), { padding:[40,40] });
+      } catch(e) {
+        showStatus('Erreur POI : ' + e.message, 5000);
+      } finally {
+        poiSearchBtn.disabled = false; poiSearchBtn.textContent = '🔍 Rechercher';
+      }
+    }
+
+    function clearPOI() { poiMarkers.clearLayers(); showStatus('POI effacés', 2000); }
+
+    // === UTILITAIRES ===
+    function showStatus(msg, duration) {
+      statusEl.textContent = msg; statusEl.style.display = 'block';
+      if (duration) setTimeout(() => statusEl.style.display = 'none', duration);
+    }
+
+    // === ÉVÉNEMENTS ===
+    searchBtn.onclick     = () => searchAddress(searchInput.value);
+    searchInput.onkeydown = (e) => { if (e.key==='Enter') searchAddress(searchInput.value); };
+    routeBtn.onclick      = calculateRoute;
+    poiBtn.onclick        = () => {
+      poiPanel.style.display = poiPanel.style.display==='none' ? 'block' : 'none';
+      resultsDiv.style.display = 'none';
+    };
+    poiSearchBtn.onclick = searchPOI;
+    poiClearBtn.onclick  = clearPOI;
+    poiCloseBtn.onclick  = () => poiPanel.style.display = 'none';
+    showRadars.onchange  = renderRadars;
+    map.on('click',   () => resultsDiv.style.display = 'none');
+    map.on('moveend', renderRadars);
+
+    renderRadars();
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => console.log('SW enregistré'))
+          .catch(err => console.warn('SW :', err));
+      });
+    }
+  </script>
+
+</body>
+</html>
