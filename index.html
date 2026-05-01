@@ -199,6 +199,7 @@
       <span style="font-size:11px;font-weight:400;opacity:0.75;">by ManuelM</span>
     </div>
     <div id="header-right">
+      <span id="weather-display" style="font-size:13px;font-weight:400;background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;cursor:default;" title="Météo locale"></span>
       <button id="night-toggle">🌙</button>
       <span id="radar-count">Chargement radars...</span>
     </div>
@@ -357,7 +358,47 @@
         iconSize: [30,30], iconAnchor: [15,15], popupAnchor: [0,-18]
       });
     }
+// === MÉTÉO (Open-Meteo, sans clé API) ===
+    const WMO_ICONS = {
+      0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
+      45:'🌫️', 48:'🌫️',
+      51:'🌦️', 53:'🌦️', 55:'🌧️',
+      61:'🌧️', 63:'🌧️', 65:'🌧️',
+      71:'🌨️', 73:'🌨️', 75:'🌨️',
+      77:'🌨️',
+      80:'🌦️', 81:'🌧️', 82:'🌧️',
+      85:'🌨️', 86:'🌨️',
+      95:'⛈️', 96:'⛈️', 99:'⛈️'
+    };
 
+    async function fetchWeather() {
+      if (!userPosition) return;
+      const [lat, lon] = userPosition;
+      try {
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&wind_speed_unit=kmh&timezone=auto`
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weathercode;
+        const icon = WMO_ICONS[code] || '🌡️';
+        document.getElementById('weather-display').textContent = `${icon} ${temp}°C`;
+      } catch(e) {
+        // Silencieux — la météo est une info secondaire
+      }
+    }
+
+    // Météo dès que la position est connue puis toutes les 10 minutes
+    const _origWatch = navigator.geolocation.watchPosition.bind(navigator.geolocation);
+    let weatherFetched = false;
+    const weatherInterval = setInterval(() => {
+      if (userPosition && !weatherFetched) {
+        weatherFetched = true;
+        fetchWeather();
+      }
+    }, 2000);
+    setInterval(fetchWeather, 600000);
     // === AFFICHAGE RADARS ===
     function renderRadars() {
       radarMarkers.clearLayers();
