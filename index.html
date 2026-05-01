@@ -256,6 +256,48 @@
     const POI_RADIUS   = 5000;
     const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
 
+    // === MODE NUIT ===
+    const NIGHT_START = 20; // heure de début mode nuit
+    const NIGHT_END   = 7;  // heure de fin mode nuit
+
+    let tileLayer = null;
+
+    const TILES = {
+      day:   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      night: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    };
+
+    const TILE_ATTR = {
+      day:   '© OpenStreetMap',
+      night: '© OpenStreetMap © CartoDB'
+    };
+
+    function isNightTime() {
+      const h = new Date().getHours();
+      return h >= NIGHT_START || h < NIGHT_END;
+    }
+
+    function applyTheme(night) {
+      document.body.classList.toggle('night', night);
+      document.getElementById('night-toggle').textContent = night ? '☀️' : '🌙';
+      if (tileLayer) map.removeLayer(tileLayer);
+      tileLayer = L.tileLayer(night ? TILES.night : TILES.day, {
+        attribution: night ? TILE_ATTR.night : TILE_ATTR.day,
+        maxZoom: 19
+      }).addTo(map);
+    }
+
+    // Application initiale du thème
+    applyTheme(isNightTime());
+
+    // Bouton manuel
+    document.getElementById('night-toggle').onclick = () => {
+      applyTheme(!document.body.classList.contains('night'));
+    };
+
+    // Vérification automatique toutes les minutes
+    setInterval(() => applyTheme(isNightTime()), 60000);
+
     // === CARTE ===
     const map = L.map('map').setView([46.603354, 1.888334], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
