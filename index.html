@@ -527,6 +527,49 @@
   </div>
 
   <div id="radar-alert">📷 RADAR — <span id="alert-detail"></span></div>
+  <!-- Bulle navigation -->
+  <div id="nav-bubble" style="
+    position:absolute;
+    top:210px;
+    left:12px;
+    right:12px;
+    z-index:1001;
+    display:none;
+    background:var(--surface);
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);
+    padding:14px 16px;
+    display:none;
+  ">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div id="nav-arrow" style="
+        width:44px;height:44px;flex-shrink:0;
+        background:var(--brand);
+        border-radius:12px;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;color:white;
+      ">➡️</div>
+      <div style="flex:1;min-width:0;">
+        <div id="nav-instruction" style="
+          font-size:15px;font-weight:700;
+          color:var(--text-1);
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        ">Calcul en cours...</div>
+        <div id="nav-distance" style="
+          font-size:12px;font-weight:500;
+          color:var(--text-2);margin-top:2px;
+        "></div>
+      </div>
+      <button id="nav-close" style="
+        width:28px;height:28px;flex-shrink:0;
+        background:var(--surface-3);border:none;
+        border-radius:50%;color:var(--text-2);
+        font-size:14px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;
+      ">✕</button>
+    </div>
+  </div>
   <div id="route-info"></div>
   <div id="status">Recherche de votre position...</div>
 
@@ -607,6 +650,81 @@
     let radarMarkers  = L.layerGroup().addTo(map);
     let poiMarkers    = L.layerGroup().addTo(map);
     let currentResult = null;
+    // === NAVIGATION ÉTAPE PAR ÉTAPE ===
+    let navSteps      = [];
+    let navStepIndex  = 0;
+    const navBubble   = document.getElementById('nav-bubble');
+    const navArrow    = document.getElementById('nav-arrow');
+    const navInstr    = document.getElementById('nav-instruction');
+    const navDist     = document.getElementById('nav-distance');
+    const navClose    = document.getElementById('nav-close');
+
+    // Icônes selon le type d'action ORS
+    const NAV_ICONS = {
+      0:'➡️',   // continuer tout droit
+      1:'↖️',   // tourner à gauche
+      2:'➡️',   // continuer
+      3:'↗️',   // tourner à droite
+      4:'↩️',   // demi-tour
+      5:'↗️',   // garder à droite
+      6:'↖️',   // garder à gauche
+      7:'🏁',   // arrivée
+      8:'🔀',   // entrée rond-point
+      9:'✅',   // sortie rond-point
+      10:'🚪',  // départ
+      11:'↗️',  // garder à droite
+      12:'↖️',  // garder à gauche
+    };
+
+    function formatDist(m) {
+      return m >= 1000 ? (m/1000).toFixed(1)+' km' : Math.round(m)+' m';
+    }
+
+    function startNavigation(steps) {
+      navSteps = steps;
+      navStepIndex = 0;
+      showNavStep(0);
+      navBubble.style.display = 'block';
+    }
+
+    function showNavStep(index) {
+      if (!navSteps.length || index >= navSteps.length) return;
+      const step = navSteps[index];
+      const icon = NAV_ICONS[step.type] || '➡️';
+      navArrow.textContent = icon;
+      navInstr.textContent = step.instruction || 'Continuer';
+      const remaining = navSteps.slice(index).reduce((s,st)=>s+st.distance,0);
+      navDist.textContent = `Dans ${formatDist(step.distance)} · Reste ${formatDist(remaining)}`;
+    }
+
+    function } else {
+            userMarker.setLatLng([lat,lon]);
+            userMarker.setIcon(carIcon);
+            updateNavFromPosition(lat, lon);
+          }
+      if (!navSteps.length || navStepIndex >= navSteps.length - 1) return;
+      const nextStep = navSteps[navStepIndex + 1];
+      if (!nextStep.way_points) return;
+      // On avance si on est à moins de 30m du prochain point de passage
+      // ORS ne fournit pas les coords exactes des steps — on utilise la distance parcourue approximée
+      // Méthode : on avance automatiquement si on dépasse le seuil de distance de l'étape courante
+      const step = navSteps[navStepIndex];
+      if (step._startDist === undefined) {
+        step._startDist = step.distance;
+        step._startPos  = [lat, lon];
+      }
+      const walked = map.distance([lat,lon], step._startPos);
+      if (walked > step.distance * 0.85) {
+        navStepIndex++;
+        showNavStep(navStepIndex);
+      }
+    }
+
+    navClose.onclick = () => {
+      navBubble.style.display = 'none';
+      navSteps = [];
+      navStepIndex = 0;
+    };
 
     // === RECONNAISSANCE VOCALE ===
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -914,6 +1032,9 @@
         const {coords,distKm,duree}=formatRoute(data);
         routeLayerA=L.polyline(coords,{color:'#1a56db',weight:6,opacity:0.85}).addTo(map);
         map.setView(userPosition,15);
+        // Lancement navigation étape par étape
+        const steps = data.features[0].properties.segments[0].steps;
+        startNavigation(steps);
         const label=avoid.includes('tollways')?'Sans péage':'Itinéraire';
         routeInfo.innerHTML=`
           <div class="route-row">
