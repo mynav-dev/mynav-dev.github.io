@@ -224,6 +224,8 @@
   <div id="action-bar">
     <button class="action-btn" id="route-btn"><span class="mi">navigation</span><span class="btn-label">Naviguer vers</span></button>
     <button class="action-btn" id="compare-btn"><span class="mi">compare_arrows</span><span class="btn-label">Chemin alt.</span></button>
+    <button class="action-btn" id="home-btn"><span class="mi">home</span><span class="btn-label">Maison</span></button>
+    <button class="action-btn" id="work-btn"><span class="mi">work</span><span class="btn-label">Travail</span></button>
     <button class="action-btn" id="poi-btn"><span class="mi">place</span><span class="btn-label">Pts d'intérêt</span></button>
     <button class="action-btn" id="fav-btn"><span class="mi">bookmarks</span><span class="btn-label">Favoris</span></button>
   </div>
@@ -527,6 +529,86 @@
     }
 
     // === RADARS ===
+    // === BOUTONS MAISON / TRAVAIL ===
+    function handleQuickNav(groupName, icon) {
+      const favs = getFavorites().filter(f => f.group === groupName);
+
+      if (!favs.length) {
+        // Aucun favori dans ce groupe → ouvre le panneau pour en créer un
+        renderFavPanel(); resetFavForm();
+        favGroupSel.value = groupName;
+        favFormTitle.textContent = `Ajouter un lieu "${groupName}"`;
+        closeAllPanels();
+        favPanel.style.display = 'flex';
+        showStatus(`Aucun lieu "${groupName}" — ajoutez-en un`, 3000);
+        return;
+      }
+
+      if (favs.length === 1) {
+        // Un seul favori → navigation directe
+        navigateToFavQuick(favs[0]);
+        return;
+      }
+
+      // Plusieurs favoris → mini-sélecteur
+      showQuickPicker(favs, groupName, icon);
+    }
+
+    function navigateToFavQuick(f) {
+      destination = [f.lat, f.lon];
+      if (searchMarker) map.removeLayer(searchMarker);
+      const ri = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize:[25,41], iconAnchor:[12,41], popupAnchor:[1,-34], shadowSize:[41,41]
+      });
+      searchMarker = L.marker([f.lat,f.lon],{icon:ri}).addTo(map).bindPopup(f.alias||f.name).openPopup();
+      searchInput.value = f.alias || f.name;
+      currentResult = f;
+      closeAllPanels();
+      calculateRoute();
+    }
+
+    function showQuickPicker(favs, groupName, icon) {
+      // Crée un mini-panneau de sélection inline dans les résultats
+      resultsDiv.innerHTML = '';
+      const header = document.createElement('div');
+      header.style.cssText = 'padding:10px 16px 6px;font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase;background:var(--surface-2);';
+      header.textContent = `${icon} ${groupName} — choisir`;
+      resultsDiv.appendChild(header);
+      favs.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.style.justifyContent = 'space-between';
+        div.innerHTML = `
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:13px;">${f.alias||f.name}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.address||''}</div>
+          </div>
+          <button style="background:var(--brand);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;margin-left:8px;">Aller</button>
+        `;
+        div.querySelector('button').onclick = (e) => { e.stopPropagation(); navigateToFavQuick(f); };
+        div.onclick = () => navigateToFavQuick(f);
+        resultsDiv.appendChild(div);
+      });
+      // Lien "modifier"
+      const editLink = document.createElement('div');
+      editLink.style.cssText = 'padding:10px 16px;font-size:12px;color:var(--brand);cursor:pointer;text-align:center;border-top:1px solid var(--border);';
+      editLink.textContent = '✏️ Gérer mes lieux ' + groupName;
+      editLink.onclick = () => { renderFavPanel(); resetFavForm(); favGroupSel.value=groupName; closeAllPanels(); favPanel.style.display='flex'; };
+      resultsDiv.appendChild(editLink);
+      resultsDiv.style.display = 'block';
+    }
+
+    document.getElementById('home-btn').onclick = () => handleQuickNav('Maison', '🏠');
+    document.getElementById('work-btn').onclick  = () => handleQuickNav('Travail', '💼');
+
+    // Appui long → gestion directe des favoris du groupe
+    let homeHoldTimer, workHoldTimer;
+    document.getElementById('home-btn').addEventListener('touchstart', () => { homeHoldTimer = setTimeout(() => { renderFavPanel(); resetFavForm(); favGroupSel.value='Maison'; closeAllPanels(); favPanel.style.display='flex'; }, 600); });
+    document.getElementById('home-btn').addEventListener('touchend', () => clearTimeout(homeHoldTimer));
+    document.getElementById('work-btn').addEventListener('touchstart', () => { workHoldTimer = setTimeout(() => { renderFavPanel(); resetFavForm(); favGroupSel.value='Travail'; closeAllPanels(); favPanel.style.display='flex'; }, 600); });
+    document.getElementById('work-btn').addEventListener('touchend', () => clearTimeout(workHoldTimer));
     function renderRadars() {
       radarMarkers.clearLayers();
       if(!showRadars.checked){radarCount.textContent='Masqués';return;}
