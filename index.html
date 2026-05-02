@@ -1060,7 +1060,22 @@
     map.on('click',   closeAllPanels);
     map.on('moveend', renderRadars);
     map.on('zoomend', renderRadars);
-
+    // Bouton recentrer
+    document.getElementById('recenter-btn').onclick = () => {
+      if (!userPosition) { showStatus('Position GPS non disponible', 2000); return; }
+      map.setView(userPosition, 15, { animate: true });
+    };
+    document.getElementById('recenter-btn').onmouseenter = function() {
+      this.style.background = 'var(--brand)';
+      this.style.color = 'white';
+      this.style.borderColor = 'var(--brand)';
+    };
+    document.getElementById('recenter-btn').onmouseleave = function() {
+      this.style.background = 'var(--surface)';
+      this.style.color = '';
+      this.style.borderColor = 'var(--border)';
+    };
+    
     renderRadars();
   </script>
 
