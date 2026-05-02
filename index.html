@@ -11,7 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ===== TOKENS ===== */
     :root {
       --brand:       #1a56db;
       --brand-dark:  #1341b0;
@@ -46,12 +45,9 @@
       --shadow-md:   0 4px 16px rgba(0,0,0,0.4);
       --shadow-lg:   0 8px 32px rgba(0,0,0,0.5);
     }
-    body.night .leaflet-tile {
-      filter: brightness(0.75) contrast(1.1) saturate(0.9);
-    }
+    body.night .leaflet-tile { filter: brightness(0.75) contrast(1.1) saturate(0.9); }
     body.night .leaflet-container { background: #0a0f1e; }
 
-    /* ===== BASE ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
@@ -61,55 +57,40 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ===== HEADER ===== */
+    /* HEADER */
     #header {
       background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
-      color: white;
-      padding: 12px 16px;
+      color: white; padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between;
       box-shadow: 0 2px 12px rgba(26,86,219,0.35);
       position: relative; z-index: 1000;
     }
-    #header-left {
-      display: flex; align-items: center; gap: 10px;
-    }
+    #header-left { display: flex; align-items: center; gap: 10px; }
     #logo-mark {
       width: 34px; height: 34px;
       background: rgba(255,255,255,0.15);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(4px);
       border: 1px solid rgba(255,255,255,0.25);
       font-size: 18px;
     }
-    #app-name {
-      display: flex; flex-direction: column; line-height: 1.1;
-    }
-    #app-name span:first-child {
-      font-size: 17px; font-weight: 700; letter-spacing: -0.3px;
-    }
-    #app-name span:last-child {
-      font-size: 10px; font-weight: 400; opacity: 0.7; letter-spacing: 0.3px;
-    }
-    #header-right {
-      display: flex; align-items: center; gap: 8px;
-    }
+    #app-name { display: flex; flex-direction: column; line-height: 1.1; }
+    #app-name span:first-child { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    #app-name span:last-child  { font-size: 10px; font-weight: 400; opacity: 0.7; letter-spacing: 0.3px; }
+    #header-right { display: flex; align-items: center; gap: 8px; }
     #weather-display {
       font-size: 13px; font-weight: 500;
       background: rgba(255,255,255,0.15);
       padding: 5px 10px; border-radius: var(--radius-full);
       border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(4px);
     }
     #night-toggle {
       width: 34px; height: 34px;
       background: rgba(255,255,255,0.15);
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: var(--radius-full);
-      color: white; font-size: 15px;
-      cursor: pointer; display: flex;
-      align-items: center; justify-content: center;
-      backdrop-filter: blur(4px);
+      color: white; font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: background 0.2s;
     }
     #night-toggle:hover { background: rgba(255,255,255,0.25); }
@@ -121,10 +102,9 @@
       white-space: nowrap;
     }
 
-    /* ===== BARRE RECHERCHE ===== */
+    /* BARRE RECHERCHE */
     #search-bar {
-      background: var(--surface);
-      padding: 10px 12px;
+      background: var(--surface); padding: 10px 12px;
       display: flex; gap: 8px; align-items: center;
       box-shadow: var(--shadow-sm);
       position: relative; z-index: 999;
@@ -162,100 +142,96 @@
       animation: pulse 1s infinite;
     }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
-
     #search-btn {
       padding: 10px 16px; flex-shrink: 0;
-      background: var(--brand);
-      color: white; border: none;
+      background: var(--brand); color: white; border: none;
       border-radius: var(--radius-md);
-      font-size: 14px; font-weight: 600;
-      font-family: inherit; cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: background 0.2s;
       box-shadow: 0 2px 8px rgba(26,86,219,0.3);
     }
     #search-btn:hover { background: var(--brand-dark); }
-    #search-btn:active { transform: scale(0.97); }
 
-    /* ===== BARRE ACTIONS ===== */
+    /* BARRE ACTIONS */
     #action-bar {
-      background: var(--surface);
-      padding: 8px 12px;
+      background: var(--surface); padding: 8px 12px;
       display: flex; gap: 8px;
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
       position: relative; z-index: 998;
     }
     .action-btn {
-      flex: 1;
-      padding: 9px 4px;
-      background: var(--surface-2);
-      color: var(--brand);
+      flex: 1; padding: 9px 4px;
+      background: var(--surface-2); color: var(--brand);
       border: 1.5px solid var(--border);
       border-radius: var(--radius-md);
-      font-size: 12px; font-weight: 600;
-      font-family: inherit; cursor: pointer;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 2px;
+      font-size: 12px; font-weight: 600; font-family: inherit;
+      cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
       transition: all 0.2s;
     }
     .action-btn:hover {
-      background: var(--brand);
-      color: white;
-      border-color: var(--brand);
+      background: var(--brand); color: white; border-color: var(--brand);
       box-shadow: 0 2px 8px rgba(26,86,219,0.3);
       transform: translateY(-1px);
     }
     .action-btn:active { transform: translateY(0); }
-    .action-btn .btn-icon { font-size: 16px; line-height: 1; }
-    .action-btn .btn-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
+    .btn-icon  { font-size: 16px; line-height: 1; }
+    .btn-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
     button:disabled { opacity: 0.5 !important; cursor: not-allowed !important; transform: none !important; }
 
-    /* ===== OPTIONS ===== */
+    /* OPTIONS */
     #options-bar {
-      background: var(--surface-2);
-      padding: 7px 14px;
+      background: var(--surface-2); padding: 7px 14px;
       display: flex; align-items: center; gap: 16px;
       font-size: 12px; font-weight: 500;
       border-bottom: 1px solid var(--border);
       color: var(--text-2); flex-wrap: wrap;
     }
-    #options-bar label {
-      display: flex; align-items: center;
-      gap: 6px; cursor: pointer; user-select: none;
-    }
-    #options-bar input[type="checkbox"] {
-      accent-color: var(--brand);
-      width: 14px; height: 14px;
-    }
+    #options-bar label { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+    #options-bar input[type="checkbox"] { accent-color: var(--brand); width: 14px; height: 14px; }
     #radar-toggle-label { color: #dc2626; font-weight: 600; }
 
-    /* ===== CARTE ===== */
-    #map {
-      height: calc(100vh - 204px);
-      width: 100%;
+    /* CARTE */
+    #map { height: calc(100vh - 204px); width: 100%; position: relative; }
+
+    /* BOUTON RECENTRER */
+    #recenter-btn {
+      position: absolute;
+      bottom: 100px; right: 14px;
+      z-index: 1000;
+      width: 46px; height: 46px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      box-shadow: var(--shadow-md);
+      font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    #recenter-btn:hover {
+      background: var(--brand); color: white; border-color: var(--brand);
+      transform: scale(1.08);
     }
 
-    /* ===== STATUS ===== */
+    /* STATUS */
     #status {
       position: absolute; bottom: 20px; left: 50%;
       transform: translateX(-50%);
-      background: var(--surface);
-      padding: 9px 18px;
-      border-radius: var(--radius-full);
-      box-shadow: var(--shadow-md);
-      font-size: 13px; font-weight: 500;
-      color: var(--text-2);
+      background: var(--surface); padding: 9px 18px;
+      border-radius: var(--radius-full); box-shadow: var(--shadow-md);
+      font-size: 13px; font-weight: 500; color: var(--text-2);
       z-index: 1000; max-width: 88%; text-align: center;
       border: 1px solid var(--border);
     }
 
-    /* ===== ALERTE RADAR ===== */
+    /* ALERTE RADAR */
     #radar-alert {
-      position: absolute; top: 210px; left: 50%;
+      position: absolute; top: 14px; left: 50%;
       transform: translateX(-50%);
       background: linear-gradient(135deg, #dc2626, #b91c1c);
-      color: white;
-      padding: 12px 20px; border-radius: var(--radius-md);
+      color: white; padding: 12px 20px;
+      border-radius: var(--radius-md);
       box-shadow: 0 4px 20px rgba(220,38,38,0.45);
       font-size: 15px; font-weight: 700;
       z-index: 1001; display: none;
@@ -263,49 +239,65 @@
       border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* ===== INFOS ROUTE ===== */
-    #route-info {
-      position: absolute; bottom: 20px; left: 12px; right: 12px;
+    /* BULLE NAVIGATION */
+    #nav-bubble {
+      position: absolute; top: 14px; left: 12px; right: 12px;
+      z-index: 1002; display: none;
       background: var(--surface);
-      padding: 14px 16px;
+      border: 1.5px solid var(--border);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
+      padding: 14px 16px;
+    }
+    #nav-bubble-inner { display: flex; align-items: center; gap: 12px; }
+    #nav-arrow {
+      width: 46px; height: 46px; flex-shrink: 0;
+      background: var(--brand); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: white;
+    }
+    #nav-texts { flex: 1; min-width: 0; }
+    #nav-instruction {
+      font-size: 15px; font-weight: 700; color: var(--text-1);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #nav-distance {
+      font-size: 12px; font-weight: 500; color: var(--text-2); margin-top: 3px;
+    }
+    #nav-close {
+      width: 28px; height: 28px; flex-shrink: 0;
+      background: var(--surface-3); border: none;
+      border-radius: 50%; color: var(--text-2);
+      font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* INFOS ROUTE */
+    #route-info {
+      position: absolute; bottom: 20px; left: 12px; right: 12px;
+      background: var(--surface); padding: 14px 16px;
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
       z-index: 999; display: none;
       border: 1px solid var(--border);
     }
-    .route-row {
-      display: flex; align-items: center; gap: 10px; padding: 7px 0;
-    }
+    .route-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
     .route-row + .route-row { border-top: 1px solid var(--border); }
-    .route-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%; flex-shrink: 0;
-    }
-    .route-label {
-      font-size: 12px; font-weight: 500;
-      color: var(--text-2); flex-shrink: 0;
-    }
-    .route-data {
-      font-weight: 700; font-size: 15px;
-      color: var(--text-1);
-    }
+    .route-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .route-label { font-size: 12px; font-weight: 500; color: var(--text-2); flex-shrink: 0; }
+    .route-data  { font-weight: 700; font-size: 15px; color: var(--text-1); }
 
-    /* ===== RÉSULTATS ===== */
+    /* RÉSULTATS */
     #results {
-      position: absolute; top: 210px; left: 12px; right: 12px;
-      background: var(--surface);
-      border-radius: var(--radius-lg);
+      position: absolute; top: 0; left: 12px; right: 12px;
+      background: var(--surface); border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
       max-height: 320px; overflow-y: auto;
       z-index: 1000; display: none;
       border: 1px solid var(--border);
-      overflow: hidden;
     }
     .result-item {
-      padding: 13px 16px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer; font-size: 13px;
-      color: var(--text-1);
+      padding: 13px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; font-size: 13px; color: var(--text-1);
       display: flex; align-items: center; gap: 8px;
       transition: background 0.15s;
     }
@@ -318,38 +310,30 @@
     }
     .result-fav-btn:hover { color: #f59e0b; }
 
-    /* ===== PANNEAUX ===== */
+    /* PANNEAUX */
     #fav-panel, #poi-panel {
-      position: absolute; top: 210px; left: 12px; right: 12px;
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      z-index: 1000; display: none;
-      border: 1px solid var(--border);
-      overflow: hidden;
+      position: absolute; top: 0; left: 12px; right: 12px;
+      background: var(--surface); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg); z-index: 1000; display: none;
+      border: 1px solid var(--border); overflow: hidden;
     }
     #fav-panel { max-height: 65vh; overflow-y: auto; }
-
     .panel-header {
       padding: 14px 16px 12px;
-      font-size: 15px; font-weight: 700;
-      color: var(--text-1);
+      font-size: 15px; font-weight: 700; color: var(--text-1);
       display: flex; justify-content: space-between; align-items: center;
       border-bottom: 1px solid var(--border);
       background: var(--surface-2);
     }
     .panel-close {
       width: 28px; height: 28px;
-      background: var(--surface-3);
-      border: none; border-radius: var(--radius-full);
-      color: var(--text-2); font-size: 14px;
-      cursor: pointer; display: flex;
-      align-items: center; justify-content: center;
+      background: var(--surface-3); border: none;
+      border-radius: var(--radius-full);
+      color: var(--text-2); font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
-
     .fav-item {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 10px;
       cursor: pointer; transition: background 0.15s;
     }
@@ -360,61 +344,41 @@
     .fav-del-btn {
       background: none; border: none; font-size: 15px;
       cursor: pointer; color: #ef4444; padding: 4px; flex-shrink: 0;
-      border-radius: var(--radius-sm);
-      transition: background 0.2s;
+      border-radius: var(--radius-sm); transition: background 0.2s;
     }
     .fav-del-btn:hover { background: #fee2e2; }
-    #fav-empty {
-      padding: 32px 16px; text-align: center;
-      color: var(--text-3); font-size: 14px; line-height: 1.6;
-    }
+    #fav-empty { padding: 32px 16px; text-align: center; color: var(--text-3); font-size: 14px; line-height: 1.6; }
 
-    /* POI */
     #poi-panel-body { padding: 14px 16px; }
-    #poi-categories {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 8px; margin-bottom: 14px;
-    }
+    #poi-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
     #poi-categories label {
       display: flex; align-items: center; gap: 8px;
-      font-size: 13px; font-weight: 500;
-      cursor: pointer; padding: 9px 12px;
-      border-radius: var(--radius-md);
-      border: 1.5px solid var(--border);
-      color: var(--text-1);
-      background: var(--surface-2);
-      transition: all 0.15s;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      padding: 9px 12px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); color: var(--text-1);
+      background: var(--surface-2); transition: all 0.15s;
     }
-    #poi-categories label:hover {
-      border-color: var(--brand);
-      background: var(--surface);
-    }
+    #poi-categories label:hover { border-color: var(--brand); background: var(--surface); }
     #poi-categories input[type="checkbox"] { accent-color: var(--brand); }
     #poi-categories input:checked ~ span { font-weight: 600; color: var(--brand); }
     #poi-actions { display: flex; gap: 8px; }
     #poi-search-btn {
       flex: 1; padding: 11px;
-      background: var(--brand); color: white;
-      border: none; border-radius: var(--radius-md);
-      font-size: 14px; font-weight: 600;
-      font-family: inherit; cursor: pointer;
-      box-shadow: 0 2px 8px rgba(26,86,219,0.3);
+      background: var(--brand); color: white; border: none;
+      border-radius: var(--radius-md);
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; box-shadow: 0 2px 8px rgba(26,86,219,0.3);
       transition: background 0.2s;
     }
     #poi-search-btn:hover { background: var(--brand-dark); }
-    #poi-clear-btn, #poi-close-btn {
+    #poi-clear-btn, #poi-close-btn-2 {
       padding: 11px 14px;
       background: var(--surface-2); color: var(--text-2);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-md);
-      font-size: 13px; font-weight: 500;
-      font-family: inherit; cursor: pointer;
-      transition: all 0.15s;
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-size: 13px; font-weight: 500; font-family: inherit;
+      cursor: pointer; transition: all 0.15s;
     }
-    #poi-clear-btn:hover, #poi-close-btn:hover {
-      background: var(--surface-3);
-      border-color: var(--text-3);
-    }
+    #poi-clear-btn:hover, #poi-close-btn-2:hover { background: var(--surface-3); }
   </style>
 </head>
 <body>
@@ -470,118 +434,77 @@
     <label id="radar-toggle-label"><input type="checkbox" id="show-radars" checked /> 📷 Radars</label>
   </div>
 
-  <!-- CARTE -->
-  <div id="map"></div>
-  <button id="recenter-btn" title="Recentrer sur ma position" style="
-    position:absolute;
-    bottom:90px;
-    right:14px;
-    z-index:1000;
-    width:44px;
-    height:44px;
-    background:var(--surface);
-    border:1.5px solid var(--border);
-    border-radius:50%;
-    box-shadow:var(--shadow-md);
-    font-size:20px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:all 0.2s;
-  ">📍</button>
-  <div id="results"></div>
+  <!-- CARTE + éléments flottants -->
+  <div id="map">
+    <!-- Bouton recentrer -->
+    <button id="recenter-btn" title="Recentrer sur ma position">📍</button>
 
-  <!-- PANNEAU FAVORIS -->
-  <div id="fav-panel">
-    <div class="panel-header">
-      <span>⭐ Mes favoris</span>
-      <button class="panel-close" id="fav-close-btn">✕</button>
-    </div>
-    <div id="fav-list"></div>
-  </div>
+    <!-- Alerte radar -->
+    <div id="radar-alert">📷 RADAR — <span id="alert-detail"></span></div>
 
-  <!-- PANNEAU POI -->
-  <div id="poi-panel">
-    <div class="panel-header">
-      <span>📍 Autour de moi · 30 km</span>
-      <button class="panel-close" id="poi-close-btn">✕</button>
-    </div>
-    <div id="poi-panel-body">
-      <div id="poi-categories">
-        <label><input type="checkbox" value="fuel" checked /><span>⛽ Stations</span></label>
-        <label><input type="checkbox" value="fast_food" checked /><span>🍔 Fast food</span></label>
-        <label><input type="checkbox" value="restaurant" /><span>🍽️ Restaurants</span></label>
-        <label><input type="checkbox" value="services" /><span>🛣️ Aires auto.</span></label>
-        <label><input type="checkbox" value="parking" /><span>🅿️ Parkings</span></label>
-        <label><input type="checkbox" value="hotel" /><span>🏨 Hôtels</span></label>
-        <label><input type="checkbox" value="hospital" /><span>🏥 Hôpitaux</span></label>
-        <label><input type="checkbox" value="aerodrome" /><span>✈️ Aéroports</span></label>
-      </div>
-      <div id="poi-actions">
-        <button id="poi-search-btn">🔍 Rechercher</button>
-        <button id="poi-clear-btn">🗑️</button>
-        <button id="poi-close-btn-2">✕ Fermer</button>
+    <!-- Bulle navigation -->
+    <div id="nav-bubble">
+      <div id="nav-bubble-inner">
+        <div id="nav-arrow">➡️</div>
+        <div id="nav-texts">
+          <div id="nav-instruction">Calcul en cours...</div>
+          <div id="nav-distance"></div>
+        </div>
+        <button id="nav-close">✕</button>
       </div>
     </div>
-  </div>
 
-  <div id="radar-alert">📷 RADAR — <span id="alert-detail"></span></div>
-  <!-- Bulle navigation -->
-  <div id="nav-bubble" style="
-    position:absolute;
-    top:210px;
-    left:12px;
-    right:12px;
-    z-index:1001;
-    display:none;
-    background:var(--surface);
-    border:1.5px solid var(--border);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-lg);
-    padding:14px 16px;
-    display:none;
-  ">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div id="nav-arrow" style="
-        width:44px;height:44px;flex-shrink:0;
-        background:var(--brand);
-        border-radius:12px;
-        display:flex;align-items:center;justify-content:center;
-        font-size:22px;color:white;
-      ">➡️</div>
-      <div style="flex:1;min-width:0;">
-        <div id="nav-instruction" style="
-          font-size:15px;font-weight:700;
-          color:var(--text-1);
-          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-        ">Calcul en cours...</div>
-        <div id="nav-distance" style="
-          font-size:12px;font-weight:500;
-          color:var(--text-2);margin-top:2px;
-        "></div>
+    <!-- Résultats recherche -->
+    <div id="results"></div>
+
+    <!-- Panneaux -->
+    <div id="fav-panel">
+      <div class="panel-header">
+        <span>⭐ Mes favoris</span>
+        <button class="panel-close" id="fav-close-btn">✕</button>
       </div>
-      <button id="nav-close" style="
-        width:28px;height:28px;flex-shrink:0;
-        background:var(--surface-3);border:none;
-        border-radius:50%;color:var(--text-2);
-        font-size:14px;cursor:pointer;
-        display:flex;align-items:center;justify-content:center;
-      ">✕</button>
+      <div id="fav-list"></div>
     </div>
+
+    <div id="poi-panel">
+      <div class="panel-header">
+        <span>📍 Autour de moi · 30 km</span>
+        <button class="panel-close" id="poi-close-btn">✕</button>
+      </div>
+      <div id="poi-panel-body">
+        <div id="poi-categories">
+          <label><input type="checkbox" value="fuel" checked /><span>⛽ Stations</span></label>
+          <label><input type="checkbox" value="fast_food" checked /><span>🍔 Fast food</span></label>
+          <label><input type="checkbox" value="restaurant" /><span>🍽️ Restaurants</span></label>
+          <label><input type="checkbox" value="services" /><span>🛣️ Aires auto.</span></label>
+          <label><input type="checkbox" value="parking" /><span>🅿️ Parkings</span></label>
+          <label><input type="checkbox" value="hotel" /><span>🏨 Hôtels</span></label>
+          <label><input type="checkbox" value="hospital" /><span>🏥 Hôpitaux</span></label>
+          <label><input type="checkbox" value="aerodrome" /><span>✈️ Aéroports</span></label>
+        </div>
+        <div id="poi-actions">
+          <button id="poi-search-btn">🔍 Rechercher</button>
+          <button id="poi-clear-btn">🗑️</button>
+          <button id="poi-close-btn-2">✕ Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infos route -->
+    <div id="route-info"></div>
+
+    <!-- Status -->
+    <div id="status">Recherche de votre position...</div>
   </div>
-  <div id="route-info"></div>
-  <div id="status">Recherche de votre position...</div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="radars.js"></script>
-
   <script>
     // =============================================
     // CONFIGURATION — remplace COLLE_TA_CLE_ICI
     // =============================================
-    const ORS_API_KEY    = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImE0NmEzNDJjZjkyODQwMDA4MjhjZGE2YmM2ZWIyZWRkIiwiaCI6Im11cm11cjY0In0=';
-    const ALERT_DIST     = 700;
+    const ORS_API_KEY    = 'COLLE_TA_CLE_ICI';
+    const ALERT_DIST     = 500;
     const POI_RADIUS     = 30000;
     const RADAR_MIN_ZOOM = 10;
     const OVERPASS_URL   = 'https://overpass-api.de/api/interpreter';
@@ -593,18 +516,12 @@
 
     // === MODE NUIT ===
     let tileLayer = null;
-    function isNightTime() {
-      const h = new Date().getHours();
-      return h >= NIGHT_START || h < NIGHT_END;
-    }
+    function isNightTime() { const h = new Date().getHours(); return h >= NIGHT_START || h < NIGHT_END; }
     function applyTheme(night) {
       document.body.classList.toggle('night', night);
       document.getElementById('night-toggle').textContent = night ? '☀️' : '🌙';
       if (!tileLayer) {
-        tileLayer = L.tileLayer(
-          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          { attribution: '© OpenStreetMap', maxZoom: 19 }
-        ).addTo(map);
+        tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(map);
       }
     }
     applyTheme(isNightTime());
@@ -637,6 +554,12 @@
     const favPanel     = document.getElementById('fav-panel');
     const favList      = document.getElementById('fav-list');
     const favCloseBtn  = document.getElementById('fav-close-btn');
+    const recenterBtn  = document.getElementById('recenter-btn');
+    const navBubble    = document.getElementById('nav-bubble');
+    const navArrow     = document.getElementById('nav-arrow');
+    const navInstr     = document.getElementById('nav-instruction');
+    const navDist      = document.getElementById('nav-distance');
+    const navClose     = document.getElementById('nav-close');
 
     // === ÉTAT ===
     let userPosition  = null;
@@ -650,35 +573,17 @@
     let radarMarkers  = L.layerGroup().addTo(map);
     let poiMarkers    = L.layerGroup().addTo(map);
     let currentResult = null;
-    // === NAVIGATION ÉTAPE PAR ÉTAPE ===
-    let navSteps      = [];
-    let navStepIndex  = 0;
-    const navBubble   = document.getElementById('nav-bubble');
-    const navArrow    = document.getElementById('nav-arrow');
-    const navInstr    = document.getElementById('nav-instruction');
-    const navDist     = document.getElementById('nav-distance');
-    const navClose    = document.getElementById('nav-close');
 
-    // Icônes selon le type d'action ORS
+    // === NAVIGATION ÉTAPE PAR ÉTAPE ===
+    let navSteps     = [];
+    let navStepIndex = 0;
+
     const NAV_ICONS = {
-      0:'➡️',   // continuer tout droit
-      1:'↖️',   // tourner à gauche
-      2:'➡️',   // continuer
-      3:'↗️',   // tourner à droite
-      4:'↩️',   // demi-tour
-      5:'↗️',   // garder à droite
-      6:'↖️',   // garder à gauche
-      7:'🏁',   // arrivée
-      8:'🔀',   // entrée rond-point
-      9:'✅',   // sortie rond-point
-      10:'🚪',  // départ
-      11:'↗️',  // garder à droite
-      12:'↖️',  // garder à gauche
+      0:'⬆️', 1:'↰', 2:'⬆️', 3:'↱', 4:'↩️',
+      5:'↗️', 6:'↖️', 7:'🏁', 8:'🔄', 9:'✅', 10:'🚦'
     };
 
-    function formatDist(m) {
-      return m >= 1000 ? (m/1000).toFixed(1)+' km' : Math.round(m)+' m';
-    }
+    function formatDist(m) { return m >= 1000 ? (m/1000).toFixed(1)+' km' : Math.round(m)+' m'; }
 
     function startNavigation(steps) {
       navSteps = steps;
@@ -690,85 +595,61 @@
     function showNavStep(index) {
       if (!navSteps.length || index >= navSteps.length) return;
       const step = navSteps[index];
-      const icon = NAV_ICONS[step.type] || '➡️';
-      navArrow.textContent = icon;
+      navArrow.textContent = NAV_ICONS[step.type] || '⬆️';
       navInstr.textContent = step.instruction || 'Continuer';
-      const remaining = navSteps.slice(index).reduce((s,st)=>s+st.distance,0);
+      const remaining = navSteps.slice(index).reduce((s, st) => s + st.distance, 0);
       navDist.textContent = `Dans ${formatDist(step.distance)} · Reste ${formatDist(remaining)}`;
     }
 
-    function } else {
-            userMarker.setLatLng([lat,lon]);
-            userMarker.setIcon(carIcon);
-            updateNavFromPosition(lat, lon);
-          }
+    function updateNavFromPosition(lat, lon) {
       if (!navSteps.length || navStepIndex >= navSteps.length - 1) return;
-      const nextStep = navSteps[navStepIndex + 1];
-      if (!nextStep.way_points) return;
-      // On avance si on est à moins de 30m du prochain point de passage
-      // ORS ne fournit pas les coords exactes des steps — on utilise la distance parcourue approximée
-      // Méthode : on avance automatiquement si on dépasse le seuil de distance de l'étape courante
       const step = navSteps[navStepIndex];
-      if (step._startDist === undefined) {
-        step._startDist = step.distance;
-        step._startPos  = [lat, lon];
-      }
-      const walked = map.distance([lat,lon], step._startPos);
-      if (walked > step.distance * 0.85) {
+      if (!step._startPos) step._startPos = [lat, lon];
+      const walked = map.distance([lat, lon], step._startPos);
+      if (walked > Math.max(step.distance * 0.85, 20)) {
         navStepIndex++;
         showNavStep(navStepIndex);
       }
     }
 
-    navClose.onclick = () => {
-      navBubble.style.display = 'none';
-      navSteps = [];
-      navStepIndex = 0;
+    navClose.onclick = () => { navBubble.style.display = 'none'; navSteps = []; navStepIndex = 0; };
+
+    // === BOUTON RECENTRER ===
+    recenterBtn.onclick = () => {
+      if (!userPosition) { showStatus('Position GPS non disponible', 2000); return; }
+      map.setView(userPosition, 15, { animate: true });
     };
 
     // === RECONNAISSANCE VOCALE ===
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.lang = 'fr-FR';
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = false;
       recognition.onstart  = () => { voiceBtn.classList.add('listening'); showStatus('🎤 En écoute...', 0); };
       recognition.onresult = (e) => {
         const t = e.results[0][0].transcript;
-        searchInput.value = t;
-        showStatus(`🎤 "${t}"`, 2000);
+        searchInput.value = t; showStatus(`🎤 "${t}"`, 2000);
         setTimeout(() => searchAddress(t), 500);
       };
-      recognition.onerror  = (e) => { showStatus('Micro : ' + e.error, 3000); voiceBtn.classList.remove('listening'); };
-      recognition.onend    = () => { voiceBtn.classList.remove('listening'); };
+      recognition.onerror = (e) => { showStatus('Micro : ' + e.error, 3000); voiceBtn.classList.remove('listening'); };
+      recognition.onend   = () => { voiceBtn.classList.remove('listening'); };
       voiceBtn.onclick = () => {
         if (voiceBtn.classList.contains('listening')) recognition.stop();
         else try { recognition.start(); } catch(e) { showStatus('Micro indisponible', 3000); }
       };
-    } else {
-      voiceBtn.style.display = 'none';
-    }
+    } else { voiceBtn.style.display = 'none'; }
 
     // === FAVORIS ===
-    function getFavorites() {
-      try { return JSON.parse(localStorage.getItem('mynav_favorites') || '[]'); } catch(e) { return []; }
-    }
-    function saveFavorites(favs) {
-      try { localStorage.setItem('mynav_favorites', JSON.stringify(favs)); } catch(e) {}
-    }
-    function isFavorite(name) { return getFavorites().some(f => f.name === name); }
+    function getFavorites() { try { return JSON.parse(localStorage.getItem('mynav_favorites') || '[]'); } catch(e) { return []; } }
+    function saveFavorites(f) { try { localStorage.setItem('mynav_favorites', JSON.stringify(f)); } catch(e) {} }
+    function isFavorite(n) { return getFavorites().some(f => f.name === n); }
     function addFavorite(name, address, lat, lon) {
       const favs = getFavorites();
       if (favs.some(f => f.name === name)) return;
       favs.push({ name, address, lat, lon, ts: Date.now() });
-      saveFavorites(favs); updateFavSaveBtn();
-      showStatus('⭐ Ajouté aux favoris', 2000);
+      saveFavorites(favs); updateFavSaveBtn(); showStatus('⭐ Ajouté aux favoris', 2000);
     }
-    function removeFavorite(name) {
-      saveFavorites(getFavorites().filter(f => f.name !== name));
-      updateFavSaveBtn(); renderFavPanel();
-    }
+    function removeFavorite(name) { saveFavorites(getFavorites().filter(f => f.name !== name)); updateFavSaveBtn(); renderFavPanel(); }
     function updateFavSaveBtn() {
       if (!currentResult) { favSaveBtn.classList.remove('active'); return; }
       const isFav = isFavorite(currentResult.name);
@@ -777,34 +658,20 @@
     }
     function renderFavPanel() {
       const favs = getFavorites();
-      if (!favs.length) {
-        favList.innerHTML = '<div id="fav-empty">Aucun favori enregistré.<br><small>Recherchez une adresse puis ⭐</small></div>';
-        return;
-      }
+      if (!favs.length) { favList.innerHTML = '<div id="fav-empty">Aucun favori.<br><small>Recherchez une adresse puis ⭐</small></div>'; return; }
       favList.innerHTML = '';
       favs.slice().reverse().forEach(f => {
         const div = document.createElement('div');
         div.className = 'fav-item';
-        div.innerHTML = `
-          <div style="flex:1;">
-            <div class="fav-item-name">⭐ ${f.name}</div>
-            <div class="fav-item-addr">${f.address||''}</div>
-          </div>
-          <button class="fav-del-btn">🗑️</button>`;
+        div.innerHTML = `<div style="flex:1;"><div class="fav-item-name">⭐ ${f.name}</div><div class="fav-item-addr">${f.address||''}</div></div><button class="fav-del-btn">🗑️</button>`;
         div.querySelector('.fav-del-btn').onclick = (e) => { e.stopPropagation(); removeFavorite(f.name); };
         div.onclick = () => {
           destination = [f.lat, f.lon];
           if (searchMarker) map.removeLayer(searchMarker);
-          const ri = new L.Icon({
-            iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-            shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]
-          });
+          const ri = new L.Icon({ iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize:[25,41], iconAnchor:[12,41], popupAnchor:[1,-34], shadowSize:[41,41] });
           searchMarker = L.marker([f.lat,f.lon],{icon:ri}).addTo(map).bindPopup(f.name).openPopup();
-          map.setView([f.lat,f.lon],14);
-          searchInput.value = f.name;
-          currentResult = f; updateFavSaveBtn();
-          favPanel.style.display = 'none';
+          map.setView([f.lat,f.lon], 14); searchInput.value = f.name;
+          currentResult = f; updateFavSaveBtn(); favPanel.style.display = 'none';
         };
         favList.appendChild(div);
       });
@@ -814,12 +681,7 @@
       if (isFavorite(currentResult.name)) { removeFavorite(currentResult.name); showStatus('Favori supprimé', 2000); }
       else addFavorite(currentResult.name, currentResult.address, currentResult.lat, currentResult.lon);
     };
-    favBtn.onclick = () => {
-      renderFavPanel();
-      const open = favPanel.style.display !== 'none';
-      closeAllPanels();
-      if (!open) favPanel.style.display = 'block';
-    };
+    favBtn.onclick = () => { renderFavPanel(); const o = favPanel.style.display !== 'none'; closeAllPanels(); if (!o) favPanel.style.display = 'block'; };
     favCloseBtn.onclick = () => favPanel.style.display = 'none';
 
     // === CONFIG POI ===
@@ -835,39 +697,26 @@
     };
 
     // === ICÔNES ===
-    const RADAR_COLORS = {
-      'ETF':'#dc2626','ETD':'#dc2626','ETT':'#dc2626',
-      'ETU':'#ea580c','ETVM':'#7c3aed','ETFR':'#0369a1','ETPN':'#047857'
-    };
+    const RADAR_COLORS = { 'ETF':'#dc2626','ETD':'#dc2626','ETT':'#dc2626','ETU':'#ea580c','ETVM':'#7c3aed','ETFR':'#0369a1','ETPN':'#047857' };
     function createRadarIcon(type) {
       const color = RADAR_COLORS[type]||'#dc2626';
       const lbl   = type==='ETVM'?'↔':type==='ETFR'?'🚦':type==='ETPN'?'PN':'📷';
-      return L.divIcon({
-        className:'',
-        html:`<div style="background:${color};width:26px;height:26px;border-radius:50%;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.35);">${lbl}</div>`,
-        iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-15]
-      });
+      return L.divIcon({ className:'', html:`<div style="background:${color};width:26px;height:26px;border-radius:50%;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.35);">${lbl}</div>`, iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-15] });
     }
     function createPoiIcon(cfg) {
-      return L.divIcon({
-        className:'',
-        html:`<div style="background:${cfg.color};width:32px;height:32px;border-radius:10px;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">${cfg.icon}</div>`,
-        iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]
-      });
+      return L.divIcon({ className:'', html:`<div style="background:${cfg.color};width:32px;height:32px;border-radius:10px;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">${cfg.icon}</div>`, iconSize:[32,32], iconAnchor:[16,16], popupAnchor:[0,-18] });
     }
 
     // === RADARS ===
     function renderRadars() {
       radarMarkers.clearLayers();
-      if (!showRadars.checked) { radarCount.textContent='Masqués'; return; }
-      if (map.getZoom() < RADAR_MIN_ZOOM) { radarCount.textContent='Zoomez ▼'; return; }
+      if (!showRadars.checked) { radarCount.textContent = 'Masqués'; return; }
+      if (map.getZoom() < RADAR_MIN_ZOOM) { radarCount.textContent = 'Zoomez ▼'; return; }
       const bounds = map.getBounds().pad(0.1);
       let count = 0;
       RADARS.forEach(r => {
         if (!bounds.contains([r.lat,r.lon])) return;
-        L.marker([r.lat,r.lon],{icon:createRadarIcon(r.t)})
-          .bindPopup(`<b>${RADAR_TYPES[r.t]||r.t}</b><br>${r.v?r.v+' km/h':'Vitesse N/A'}<br><small>${r.id}</small>`)
-          .addTo(radarMarkers);
+        L.marker([r.lat,r.lon],{icon:createRadarIcon(r.t)}).bindPopup(`<b>${RADAR_TYPES[r.t]||r.t}</b><br>${r.v?r.v+' km/h':'N/A'}<br><small>${r.id}</small>`).addTo(radarMarkers);
         count++;
       });
       radarCount.textContent = `📷 ${count}`;
@@ -877,36 +726,51 @@
     function checkRadarProximity(lat, lon) {
       if (!showRadars.checked) return;
       let nearest=null, nearestDist=Infinity;
-      RADARS.forEach(r => {
-        const d = map.distance([lat,lon],[r.lat,r.lon]);
-        if (d<ALERT_DIST && d<nearestDist) { nearestDist=d; nearest=r; }
-      });
+      RADARS.forEach(r => { const d=map.distance([lat,lon],[r.lat,r.lon]); if(d<ALERT_DIST&&d<nearestDist){nearestDist=d;nearest=r;} });
       if (nearest && !alertedRadars.has(nearest.id)) {
         alertedRadars.add(nearest.id);
-        triggerAlert(nearest, Math.round(nearestDist));
-        setTimeout(() => alertedRadars.delete(nearest.id), 30000);
+        const vma=nearest.v?`${nearest.v} km/h`:'';
+        alertDetail.textContent=`${RADAR_TYPES[nearest.t]||nearest.t}${vma?' · '+vma:''} · ${Math.round(nearestDist)}m`;
+        radarAlert.style.display='block'; playBeep();
+        if(alertTimeout) clearTimeout(alertTimeout);
+        alertTimeout=setTimeout(()=>radarAlert.style.display='none',6000);
+        setTimeout(()=>alertedRadars.delete(nearest.id),30000);
       }
-    }
-    function triggerAlert(radar, dist) {
-      const vma = radar.v?`${radar.v} km/h`:'';
-      alertDetail.textContent = `${RADAR_TYPES[radar.t]||radar.t}${vma?' · '+vma:''} · ${dist}m`;
-      radarAlert.style.display='block'; playBeep();
-      if (alertTimeout) clearTimeout(alertTimeout);
-      alertTimeout = setTimeout(()=>radarAlert.style.display='none', 6000);
     }
     function playBeep() {
       try {
         const ctx=new(window.AudioContext||window.webkitAudioContext)();
-        const osc=ctx.createOscillator(), gain=ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.frequency.value=880; osc.type='sine';
+        const osc=ctx.createOscillator(),gain=ctx.createGain();
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.frequency.value=880;osc.type='sine';
         gain.gain.setValueAtTime(0.5,ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.8);
-        osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.8);
+        osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.8);
       } catch(e){}
     }
 
     // === GÉOLOCALISATION ===
+    function makeCarIcon(rotation) {
+      return L.divIcon({
+        className:'',
+        html:`<div style="transform:rotate(${rotation}deg);transform-origin:center;width:40px;height:40px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+            <defs>
+              <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/></filter>
+              <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#3b82f6"/>
+                <stop offset="100%" style="stop-color:#1d4ed8"/>
+              </linearGradient>
+            </defs>
+            <polygon points="20,2 38,34 20,26 2,34" fill="url(#gr)" filter="url(#sh)"/>
+            <polygon points="20,2 28,22 20,18 12,22" fill="#60a5fa" opacity="0.5"/>
+            <circle cx="20" cy="24" r="3" fill="white" opacity="0.9"/>
+          </svg>
+        </div>`,
+        iconSize:[40,40],iconAnchor:[20,20],popupAnchor:[0,-22]
+      });
+    }
+
     if ('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
         (pos) => {
@@ -914,24 +778,7 @@
           userPosition=[lat,lon];
           const heading=pos.coords.heading;
           const rotation=(heading!==null&&!isNaN(heading))?heading:0;
-          const carIcon=L.divIcon({
-            className:'',
-            html:`<div style="transform:rotate(${rotation}deg);transform-origin:center;width:40px;height:40px;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
-                <defs>
-                  <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/></filter>
-                  <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#3b82f6"/>
-                    <stop offset="100%" style="stop-color:#1d4ed8"/>
-                  </linearGradient>
-                </defs>
-                <polygon points="20,2 38,34 20,26 2,34" fill="url(#gr)" filter="url(#sh)"/>
-                <polygon points="20,2 28,22 20,18 12,22" fill="#60a5fa" opacity="0.5"/>
-                <circle cx="20" cy="24" r="3" fill="white" opacity="0.9"/>
-              </svg>
-            </div>`,
-            iconSize:[40,40],iconAnchor:[20,20],popupAnchor:[0,-22]
-          });
+          const carIcon=makeCarIcon(rotation);
           if (!userMarker) {
             userMarker=L.marker([lat,lon],{icon:carIcon}).addTo(map).bindPopup('Votre position');
             map.setView([lat,lon],14);
@@ -941,6 +788,7 @@
           } else {
             userMarker.setLatLng([lat,lon]);
             userMarker.setIcon(carIcon);
+            updateNavFromPosition(lat,lon);
           }
           checkRadarProximity(lat,lon);
         },
@@ -955,59 +803,40 @@
       searchBtn.disabled=true; searchBtn.textContent='...';
       resultsDiv.style.display='none';
       try {
-        const res=await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=fr&limit=5`,
-          {headers:{'Accept-Language':'fr'}}
-        );
+        const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=fr&limit=5`,{headers:{'Accept-Language':'fr'}});
         const results=await res.json();
-        if (!results.length){showStatus('Aucun résultat',3000);return;}
-        if (results.length===1) selectResult(results[0]);
-        else displayResults(results);
+        if(!results.length){showStatus('Aucun résultat',3000);return;}
+        if(results.length===1) selectResult(results[0]); else displayResults(results);
       } catch(e){showStatus('Erreur : '+e.message,4000);}
       finally{searchBtn.disabled=false;searchBtn.textContent='Chercher';}
     }
     function displayResults(results) {
       resultsDiv.innerHTML='';
       results.forEach(r=>{
-        const div=document.createElement('div');
-        div.className='result-item';
+        const div=document.createElement('div'); div.className='result-item';
         const isFav=isFavorite(r.display_name);
         div.innerHTML=`<span style="flex:1;">${r.display_name}</span><button class="result-fav-btn">${isFav?'★':'☆'}</button>`;
-        div.querySelector('.result-fav-btn').onclick=(e)=>{
-          e.stopPropagation();
-          if(isFavorite(r.display_name)){removeFavorite(r.display_name);e.target.textContent='☆';}
-          else{addFavorite(r.display_name,r.display_name,parseFloat(r.lat),parseFloat(r.lon));e.target.textContent='★';}
-        };
-        div.onclick=()=>selectResult(r);
-        resultsDiv.appendChild(div);
+        div.querySelector('.result-fav-btn').onclick=(e)=>{e.stopPropagation();if(isFavorite(r.display_name)){removeFavorite(r.display_name);e.target.textContent='☆';}else{addFavorite(r.display_name,r.display_name,parseFloat(r.lat),parseFloat(r.lon));e.target.textContent='★';}};
+        div.onclick=()=>selectResult(r); resultsDiv.appendChild(div);
       });
       resultsDiv.style.display='block';
     }
     function selectResult(result) {
-      const lat=parseFloat(result.lat), lon=parseFloat(result.lon);
-      destination=[lat,lon];
-      currentResult={name:result.display_name,address:result.display_name,lat,lon};
+      const lat=parseFloat(result.lat),lon=parseFloat(result.lon);
+      destination=[lat,lon]; currentResult={name:result.display_name,address:result.display_name,lat,lon};
       updateFavSaveBtn();
-      if (searchMarker) map.removeLayer(searchMarker);
-      const ri=new L.Icon({
-        iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-        shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]
-      });
+      if(searchMarker) map.removeLayer(searchMarker);
+      const ri=new L.Icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]});
       searchMarker=L.marker([lat,lon],{icon:ri}).addTo(map).bindPopup(result.display_name).openPopup();
-      map.setView([lat,lon],14);
-      resultsDiv.style.display='none';
+      map.setView([lat,lon],14); resultsDiv.style.display='none';
     }
 
     // === ORS ===
     async function fetchRoute(avoidFeatures) {
       const body={coordinates:[[userPosition[1],userPosition[0]],[destination[1],destination[0]]]};
-      if (avoidFeatures.length) body.options={avoid_features:avoidFeatures};
-      const res=await fetch(
-        'https://api.openrouteservice.org/v2/directions/driving-car/geojson',
-        {method:'POST',headers:{'Authorization':ORS_API_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)}
-      );
-      if (!res.ok) throw new Error('ORS '+res.status);
+      if(avoidFeatures.length) body.options={avoid_features:avoidFeatures};
+      const res=await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson',{method:'POST',headers:{'Authorization':ORS_API_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!res.ok) throw new Error('ORS '+res.status);
       return await res.json();
     }
     function formatRoute(data) {
@@ -1016,25 +845,22 @@
       const distKm=(route.properties.summary.distance/1000).toFixed(1);
       const durMin=Math.round(route.properties.summary.duration/60);
       const h=Math.floor(durMin/60),m=durMin%60;
-      return {coords,distKm,duree:h>0?`${h}h ${m}min`:`${m} min`};
+      const steps=route.properties.segments[0].steps;
+      return {coords,distKm,duree:h>0?`${h}h ${m}min`:`${m} min`,steps};
     }
 
     async function calculateRoute() {
-      if (!userPosition){showStatus('Position GPS non disponible',3000);return;}
-      if (!destination) {showStatus('Destination non définie',3000);return;}
-      routeBtn.disabled=true;
-      clearRoutes();
+      if(!userPosition){showStatus('Position GPS non disponible',3000);return;}
+      if(!destination) {showStatus('Destination non définie',3000);return;}
+      routeBtn.disabled=true; clearRoutes();
       const avoid=[];
-      if (avoidTolls.checked) avoid.push('tollways');
-      if (avoidHwy.checked)   avoid.push('highways');
+      if(avoidTolls.checked) avoid.push('tollways');
+      if(avoidHwy.checked)   avoid.push('highways');
       try {
         const data=await fetchRoute(avoid);
-        const {coords,distKm,duree}=formatRoute(data);
+        const {coords,distKm,duree,steps}=formatRoute(data);
         routeLayerA=L.polyline(coords,{color:'#1a56db',weight:6,opacity:0.85}).addTo(map);
         map.setView(userPosition,15);
-        // Lancement navigation étape par étape
-        const steps = data.features[0].properties.segments[0].steps;
-        startNavigation(steps);
         const label=avoid.includes('tollways')?'Sans péage':'Itinéraire';
         routeInfo.innerHTML=`
           <div class="route-row">
@@ -1044,22 +870,19 @@
             <span class="route-label">${label}</span>
           </div>`;
         routeInfo.style.display='block';
+        startNavigation(steps);
       } catch(e){showStatus('Erreur itinéraire : '+e.message,5000);}
       finally{routeBtn.disabled=false;}
     }
 
     async function compareRoutes() {
-      if (!userPosition){showStatus('Position GPS non disponible',3000);return;}
-      if (!destination) {showStatus('Destination non définie',3000);return;}
-      compareBtn.disabled=true;
-      clearRoutes();
+      if(!userPosition){showStatus('Position GPS non disponible',3000);return;}
+      if(!destination) {showStatus('Destination non définie',3000);return;}
+      compareBtn.disabled=true; clearRoutes();
       try {
         const avoid=avoidHwy.checked?['highways']:[];
-        const [dataA,dataB]=await Promise.all([
-          fetchRoute([...avoid,'tollways']),
-          fetchRoute([...avoid])
-        ]);
-        const a=formatRoute(dataA), b=formatRoute(dataB);
+        const [dataA,dataB]=await Promise.all([fetchRoute([...avoid,'tollways']),fetchRoute([...avoid])]);
+        const a=formatRoute(dataA),b=formatRoute(dataB);
         routeLayerB=L.polyline(b.coords,{color:'#ea580c',weight:6,opacity:0.7}).addTo(map);
         routeLayerA=L.polyline(a.coords,{color:'#1a56db',weight:6,opacity:0.9}).addTo(map);
         map.setView(userPosition,15);
@@ -1084,57 +907,54 @@
     }
 
     function clearRoutes() {
-      if (routeLayerA){map.removeLayer(routeLayerA);routeLayerA=null;}
-      if (routeLayerB){map.removeLayer(routeLayerB);routeLayerB=null;}
+      if(routeLayerA){map.removeLayer(routeLayerA);routeLayerA=null;}
+      if(routeLayerB){map.removeLayer(routeLayerB);routeLayerB=null;}
       routeInfo.style.display='none';
+      navBubble.style.display='none'; navSteps=[]; navStepIndex=0;
     }
 
     // === POI ===
     async function searchPOI() {
-      if (!userPosition){showStatus('Position GPS non disponible',3000);return;}
+      if(!userPosition){showStatus('Position GPS non disponible',3000);return;}
       const selected=[...document.querySelectorAll('#poi-categories input:checked')].map(i=>i.value);
-      if (!selected.length){showStatus('Sélectionnez au moins une catégorie',3000);return;}
-      poiSearchBtn.disabled=true; poiSearchBtn.textContent='Recherche...';
-      poiMarkers.clearLayers();
+      if(!selected.length){showStatus('Sélectionnez au moins une catégorie',3000);return;}
+      poiSearchBtn.disabled=true; poiSearchBtn.textContent='Recherche...'; poiMarkers.clearLayers();
       const [lat,lon]=userPosition;
       const queries=selected.map(k=>`${POI_CONFIG[k].query}(around:${POI_RADIUS},${lat},${lon});`).join('\n');
       try {
         const res=await fetch(OVERPASS_URL,{method:'POST',body:'data='+encodeURIComponent(`[out:json][timeout:25];\n(\n${queries}\n);\nout body;`)});
-        if (!res.ok) throw new Error('Overpass '+res.status);
+        if(!res.ok) throw new Error('Overpass '+res.status);
         const data=await res.json();
         const elements=data.elements||[];
-        if (!elements.length){showStatus('Aucun POI trouvé',3000);return;}
+        if(!elements.length){showStatus('Aucun POI trouvé',3000);return;}
         elements.forEach(el=>{
-          if (!el.lat||!el.lon) return;
+          if(!el.lat||!el.lon) return;
           const tags=el.tags||{};
           let cfg=null;
-          if      (tags.amenity==='fuel')        cfg=POI_CONFIG.fuel;
-          else if (tags.amenity==='fast_food')   cfg=POI_CONFIG.fast_food;
-          else if (tags.amenity==='restaurant')  cfg=POI_CONFIG.restaurant;
-          else if (tags.highway==='services')    cfg=POI_CONFIG.services;
-          else if (tags.amenity==='parking')     cfg=POI_CONFIG.parking;
-          else if (tags.tourism==='hotel')       cfg=POI_CONFIG.hotel;
-          else if (tags.amenity==='hospital')    cfg=POI_CONFIG.hospital;
-          else if (tags.aeroway==='aerodrome')   cfg=POI_CONFIG.aerodrome;
-          if (!cfg) return;
+          if(tags.amenity==='fuel')        cfg=POI_CONFIG.fuel;
+          else if(tags.amenity==='fast_food')   cfg=POI_CONFIG.fast_food;
+          else if(tags.amenity==='restaurant')  cfg=POI_CONFIG.restaurant;
+          else if(tags.highway==='services')    cfg=POI_CONFIG.services;
+          else if(tags.amenity==='parking')     cfg=POI_CONFIG.parking;
+          else if(tags.tourism==='hotel')       cfg=POI_CONFIG.hotel;
+          else if(tags.amenity==='hospital')    cfg=POI_CONFIG.hospital;
+          else if(tags.aeroway==='aerodrome')   cfg=POI_CONFIG.aerodrome;
+          if(!cfg) return;
           const name=tags.name||cfg.label;
           const dist=Math.round(map.distance(userPosition,[el.lat,el.lon]));
-          const poiLat=el.lat, poiLon=el.lon;
+          const poiLat=el.lat,poiLon=el.lon;
           const popup=L.popup().setContent((()=>{
-            const div=document.createElement('div');
-            div.style.fontFamily='Inter,system-ui,sans-serif';
+            const div=document.createElement('div'); div.style.fontFamily='Inter,system-ui,sans-serif';
             div.innerHTML=`<b style="font-size:14px;">${cfg.icon} ${name}</b><br><span style="color:#475569;font-size:12px;">${cfg.label} · ${dist} m</span>`;
             const btn=document.createElement('button');
             btn.textContent='🗺️ Itinéraire';
             btn.style.cssText='margin-top:10px;width:100%;padding:9px;background:#1a56db;color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;';
             btn.onclick=()=>{destination=[poiLat,poiLon];map.closePopup();calculateRoute();};
-            div.appendChild(btn);
-            return div;
+            div.appendChild(btn); return div;
           })());
           L.marker([el.lat,el.lon],{icon:createPoiIcon(cfg)}).bindPopup(popup).addTo(poiMarkers);
         });
-        showStatus(`${elements.length} POI trouvés`,2000);
-        poiPanel.style.display='none';
+        showStatus(`${elements.length} POI trouvés`,2000); poiPanel.style.display='none';
         const group=L.featureGroup([userMarker,...poiMarkers.getLayers()]);
         map.fitBounds(group.getBounds(),{padding:[40,40]});
       } catch(e){showStatus('Erreur POI : '+e.message,5000);}
@@ -1145,11 +965,11 @@
     // === MÉTÉO ===
     const WMO={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'🌨️',77:'🌨️',80:'🌦️',81:'🌧️',82:'🌧️',85:'🌨️',86:'🌨️',95:'⛈️',96:'⛈️',99:'⛈️'};
     async function fetchWeather() {
-      if (!userPosition) return;
+      if(!userPosition) return;
       try {
         const [lat,lon]=userPosition;
         const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&timezone=auto`);
-        if (!res.ok) return;
+        if(!res.ok) return;
         const data=await res.json();
         document.getElementById('weather-display').textContent=`${WMO[data.current.weathercode]||'🌡️'} ${Math.round(data.current.temperature_2m)}°C`;
       } catch(e){}
@@ -1181,28 +1001,13 @@
     map.on('click',   closeAllPanels);
     map.on('moveend', renderRadars);
     map.on('zoomend', renderRadars);
-    // Bouton recentrer
-    document.getElementById('recenter-btn').onclick = () => {
-      if (!userPosition) { showStatus('Position GPS non disponible', 2000); return; }
-      map.setView(userPosition, 15, { animate: true });
-    };
-    document.getElementById('recenter-btn').onmouseenter = function() {
-      this.style.background = 'var(--brand)';
-      this.style.color = 'white';
-      this.style.borderColor = 'var(--brand)';
-    };
-    document.getElementById('recenter-btn').onmouseleave = function() {
-      this.style.background = 'var(--surface)';
-      this.style.color = '';
-      this.style.borderColor = 'var(--border)';
-    };
-    
+
     renderRadars();
   </script>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', ()=>{
+    if('serviceWorker' in navigator){
+      window.addEventListener('load',()=>{
         navigator.serviceWorker.register('/sw.js')
           .then(()=>console.log('SW ok'))
           .catch(e=>console.warn('SW:',e));
