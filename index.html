@@ -322,7 +322,7 @@
     function applyTheme(night) {
       document.body.classList.toggle('night', night);
       document.getElementById('night-toggle').innerHTML = `<span class="mi" style="font-size:18px;">${night?'light_mode':'dark_mode'}</span>`;
-      if (!tileLayer) tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
+      if (!tileLayer) tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:22, maxNativeZoom:19 }).addTo(map);
     }
     applyTheme(isNightTime());
     document.getElementById('night-toggle').onclick = () => applyTheme(!document.body.classList.contains('night'));
