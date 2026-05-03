@@ -426,7 +426,7 @@
     recenterBtn.onclick = () => {
       if (!userPosition) { showStatus('Position GPS non disponible', 2000); return; }
       setTracking(true);
-      map.setView(userPosition, 20, { animate: true });
+      map.setView(userPosition, 19, { animate: true });
     };
 
     // Si l'utilisateur déplace manuellement la carte → désactiver le suivi
