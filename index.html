@@ -786,7 +786,7 @@
 
     // === ORS ===
     async function fetchRoute(avoid) {
-      const body={coordinates:[[userPosition[1],userPosition[0]],[destination[1],destination[0]]]};
+      const body={coordinates:[[userPosition[1],userPosition[0]],[destination[1],destination[0]]],language:'fr'};
       if(avoid.length) body.options={avoid_features:avoid};
       const res=await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson',{method:'POST',headers:{'Authorization':ORS_API_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
       if(!res.ok) throw new Error('ORS '+res.status);
