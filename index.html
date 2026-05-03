@@ -823,9 +823,13 @@
         const data=await fetchRoute(avoid);
         const {coords,distKm,duree,steps}=formatRoute(data);
         routeLayerA=L.polyline(coords,{color:'#1a56db',weight:6,opacity:0.85}).addTo(map);
-        // Retour sur la position de départ + réactivation du suivi
+        // Ferme le popup destination pour éviter le dézoom automatique
+        map.closePopup();
+        // Réactivation du suivi + zoom conduite après stabilisation
         setTracking(true);
-        map.setView(userPosition,15);
+        setTimeout(() => {
+          map.setView(userPosition, 20, { animate: true, duration: 0.8 });
+        }, 800);
         const label=avoid.includes('tollways')?'Sans péage':'Itinéraire';
         routeInfo.innerHTML=`<div class="route-row"><div class="route-dot" style="background:#16a34a;"></div><span class="route-label" style="color:#16a34a;font-weight:700;">🚗 Allons-y !</span><span class="route-data">${distKm} km — ${duree}</span><span class="route-label">${label}</span></div>`;
         routeInfo.style.display='block'; startNavigation(steps);
@@ -843,8 +847,11 @@
         const a=formatRoute(dataA),b=formatRoute(dataB);
         routeLayerB=L.polyline(b.coords,{color:'#ea580c',weight:6,opacity:0.7}).addTo(map);
         routeLayerA=L.polyline(a.coords,{color:'#1a56db',weight:6,opacity:0.9}).addTo(map);
-        setTracking(true);
-        map.setView(userPosition,15);
+      setTracking(true);
+        map.closePopup();
+        setTimeout(() => {
+          map.setView(userPosition, 20, { animate: true, duration: 0.8 });
+        }, 800);
         routeInfo.innerHTML=`
           <div class="route-row"><div class="route-dot" style="background:#16a34a;"></div><span class="route-label" style="color:#16a34a;font-weight:700;">🚗 Allons-y !</span></div>
           <div class="route-row"><div class="route-dot" style="background:#1a56db;"></div><span class="route-label">Sans péage</span><span class="route-data">${a.distKm} km — ${a.duree}</span></div>
