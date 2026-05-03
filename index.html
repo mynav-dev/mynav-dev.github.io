@@ -144,7 +144,7 @@
     .result-fav-btn:hover { color: #f59e0b; }
 
     /* PANNEAUX */
-    #fav-panel, #poi-panel, #sync-panel { position: absolute; top: 0; left: 12px; right: 12px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 1000; display: none; border: 1px solid var(--border); overflow: hidden; }
+    #fav-panel, #poi-panel, #sync-panel { position: absolute; top: 0; left: 12px; right: 12px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 1000; display: none; border: 1px solid var(--border); overflow: hidden; pointer-events: auto; }
     #fav-panel { max-height: 80vh; display: none; flex-direction: column; }
     #sync-panel { padding: 20px; }
     .panel-header { padding: 14px 16px 12px; font-size: 15px; font-weight: 700; color: var(--text-1); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: var(--surface-2); flex-shrink: 0; }
@@ -955,7 +955,12 @@
     poiCloseBtn.onclick   = ()=>poiPanel.style.display='none';
     poiCloseBtn2.onclick  = ()=>poiPanel.style.display='none';
     showRadars.onchange   = renderRadars;
-    map.on('click',   closeAllPanels);
+    map.on('click', (e) => {
+      // Ne ferme les panneaux que si le clic est sur la carte elle-même
+      // pas sur un élément flottant au-dessus
+      if (e.originalEvent.target.closest('#poi-panel, #fav-panel, #results, #nav-bubble, #sync-panel, #route-info, #speed-bubble, #recenter-btn')) return;
+      closeAllPanels();
+    });
     map.on('moveend', renderRadars);
     map.on('zoomend', renderRadars);
 
