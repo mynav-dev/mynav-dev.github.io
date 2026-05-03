@@ -195,7 +195,12 @@
   </div>
 
   <div id="search-bar">
-    <input type="text" id="search-input" placeholder="Où allons-nous ?" />
+    <div style="flex:1;min-width:0;position:relative;display:flex;align-items:center;">
+      <input type="text" id="search-input" placeholder="Où allons-nous ?" style="width:100%;padding-right:36px;" />
+      <button id="clear-search-btn" title="Effacer" style="position:absolute;right:8px;background:none;border:none;cursor:pointer;color:var(--text-3);display:none;padding:0;line-height:1;">
+        <span class="mi" style="font-size:18px;">cancel</span>
+      </button>
+    </div>
     <button class="icon-btn" id="voice-btn" title="Recherche vocale"><span class="mi">mic</span></button>
     <button class="icon-btn" id="fav-save-btn" title="Ajouter aux favoris"><span class="mi">bookmark</span></button>
     <button id="search-btn">Chercher</button>
@@ -820,6 +825,17 @@
     map.on('click',   closeAllPanels);
     map.on('moveend', renderRadars);
     map.on('zoomend', renderRadars);
+    // Bouton croix — effacer la recherche
+    const clearBtn = document.getElementById('clear-search-btn');
+    searchInput.addEventListener('input', () => {
+      clearBtn.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+    });
+    clearBtn.onclick = () => {
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      resultsDiv.style.display = 'none';
+      searchInput.focus();
+    };
 
     renderRadars();
   </script>
