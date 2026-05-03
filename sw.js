@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mynav-v7';
+const CACHE_NAME = 'mynav-v1';
 const ASSETS = [
   '/',
   '/index.html',
