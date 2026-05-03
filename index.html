@@ -60,9 +60,8 @@
     #header-right { display: flex; align-items: center; gap: 8px; }
     #weather-display { font-size: 13px; font-weight: 500; background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: var(--radius-full); border: 1px solid rgba(255,255,255,0.2); }
     #night-toggle { width: 34px; height: 34px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-full); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    #night-toggle:hover { background: rgba(255,255,255,0.25); }
     #radar-count { font-size: 11px; font-weight: 500; background: rgba(255,255,255,0.15); padding: 4px 9px; border-radius: var(--radius-full); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap; }
-    #sync-status { font-size: 11px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: var(--radius-full); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
+    #sync-status { font-size: 13px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: var(--radius-full); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
 
     /* BARRE RECHERCHE */
     #search-bar { background: var(--surface); padding: 10px 12px; display: flex; gap: 8px; align-items: center; box-shadow: var(--shadow-sm); position: relative; z-index: 999; border-bottom: 1px solid var(--border); }
@@ -117,7 +116,7 @@
     #radar-alert { position: absolute; top: 90px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 10px 18px; border-radius: var(--radius-md); box-shadow: 0 4px 20px rgba(220,38,38,0.45); font-size: 14px; font-weight: 700; z-index: 1001; display: none; text-align: center; white-space: nowrap; }
 
     /* BULLE NAVIGATION */
-    #nav-bubble { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 1002; display: none; background: #1a1f3a; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); padding: 8px 12px; }
+    #nav-bubble { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 1002; display: none; background: #1a1f3a; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); padding: 8px 12px; pointer-events: auto; }
     #nav-bubble-inner { display: flex; align-items: center; gap: 10px; }
     #nav-arrow { width: 42px; height: 42px; flex-shrink: 0; background: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
     #nav-arrow .mi { font-size: 24px; }
@@ -127,7 +126,7 @@
     #nav-close { width: 22px; height: 22px; flex-shrink: 0; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: #7b8fc0; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
     /* INFOS ROUTE */
-    #route-info { position: absolute; bottom: 20px; left: 12px; right: 12px; background: var(--surface); padding: 14px 16px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 999; display: none; border: 1px solid var(--border); }
+    #route-info { position: absolute; bottom: 20px; left: 12px; right: 12px; background: var(--surface); padding: 14px 16px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 999; display: none; border: 1px solid var(--border); pointer-events: auto; }
     .route-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
     .route-row + .route-row { border-top: 1px solid var(--border); }
     .route-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -135,7 +134,7 @@
     .route-data  { font-weight: 700; font-size: 15px; color: var(--text-1); }
 
     /* RÉSULTATS */
-    #results { position: absolute; top: 0; left: 12px; right: 12px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); max-height: 380px; overflow-y: auto; z-index: 1000; display: none; border: 1px solid var(--border); }
+    #results { position: absolute; top: 0; left: 12px; right: 12px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); max-height: 380px; overflow-y: auto; z-index: 1000; display: none; border: 1px solid var(--border); pointer-events: auto; }
     .result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13px; color: var(--text-1); display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
     .result-item:hover { background: var(--surface-2); }
     .result-item:last-child { border-bottom: none; }
@@ -146,7 +145,6 @@
     /* PANNEAUX */
     #fav-panel, #poi-panel, #sync-panel { position: absolute; top: 0; left: 12px; right: 12px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 1000; display: none; border: 1px solid var(--border); overflow: hidden; pointer-events: auto; }
     #fav-panel { max-height: 80vh; display: none; flex-direction: column; }
-    #sync-panel { padding: 20px; }
     .panel-header { padding: 14px 16px 12px; font-size: 15px; font-weight: 700; color: var(--text-1); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: var(--surface-2); flex-shrink: 0; }
     .panel-close { width: 28px; height: 28px; background: var(--surface-3); border: none; border-radius: var(--radius-full); color: var(--text-2); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     #fav-body { overflow-y: auto; flex: 1; }
@@ -175,12 +173,14 @@
     #fav-cancel-edit { width: 100%; padding: 8px; background: none; color: var(--text-3); border: none; font-size: 12px; font-family: inherit; cursor: pointer; margin-top: 4px; }
 
     /* PANNEAU SYNC */
+    #sync-panel { overflow-y: auto; max-height: 80vh; }
+    #sync-panel-body { padding: 16px; }
     #sync-panel h3 { font-size: 15px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
     #sync-panel p  { font-size: 13px; color: var(--text-2); margin-bottom: 14px; line-height: 1.5; }
-    #sync-id-display { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-family: monospace; color: var(--text-1); word-break: break-all; margin-bottom: 10px; }
-    #sync-copy-btn { width: 100%; padding: 10px; background: var(--brand); color: white; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 14px; }
+    #sync-id-display { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 15px; font-weight: 700; color: var(--brand); text-align: center; margin-bottom: 10px; letter-spacing: 1px; }
+    #sync-copy-btn { width: 100%; padding: 10px; background: var(--brand); color: white; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 16px; }
     #sync-import-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; }
-    #sync-id-input { width: 100%; padding: 10px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: monospace; color: var(--text-1); outline: none; margin-bottom: 8px; }
+    #sync-id-input { width: 100%; padding: 10px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; color: var(--text-1); outline: none; margin-bottom: 8px; }
     #sync-id-input:focus { border-color: var(--brand); }
     #sync-import-btn { width: 100%; padding: 10px; background: #16a34a; color: white; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 8px; }
     #sync-close-btn { width: 100%; padding: 8px; background: none; color: var(--text-3); border: none; font-size: 12px; cursor: pointer; }
@@ -188,7 +188,7 @@
     /* POI */
     #poi-panel-body { padding: 14px 16px; }
     #poi-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-    #poi-categories label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; cursor: pointer; padding: 9px 12px; border-radius: var(--radius-md); border: 1.5px solid var(--border); color: var(--text-1); background: var(--surface-2); transition: all 0.15s; }
+    #poi-categories label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; cursor: pointer; padding: 9px 12px; border-radius: var(--radius-md); border: 1.5px solid var(--border); color: var(--text-1); background: var(--surface-2); transition: all 0.15s; user-select: none; }
     #poi-categories label:hover { border-color: var(--brand); background: var(--surface); }
     #poi-categories input[type="checkbox"] { accent-color: var(--brand); }
     #poi-categories input:checked ~ span { font-weight: 600; color: var(--brand); }
@@ -206,7 +206,7 @@
     </div>
     <div id="header-right">
       <span id="weather-display"></span>
-      <span id="sync-status" title="Synchronisation Firebase">☁️</span>
+      <span id="sync-status" title="Synchronisation">☁️</span>
       <button id="night-toggle"><span class="mi" style="font-size:18px;">dark_mode</span></button>
       <span id="radar-count">...</span>
     </div>
@@ -277,7 +277,7 @@
 
     <!-- PANNEAU POI -->
     <div id="poi-panel">
-      <div class="panel-header"><span>Autour de moi · 6 km</span><button class="panel-close" id="poi-close-btn">✕</button></div>
+      <div class="panel-header"><span>Autour de moi · 5 km</span><button class="panel-close" id="poi-close-btn">✕</button></div>
       <div id="poi-panel-body">
         <div id="poi-categories">
           <label><input type="checkbox" value="fuel" checked /><span>⛽ Stations</span></label>
@@ -300,14 +300,15 @@
     <!-- PANNEAU SYNC -->
     <div id="sync-panel">
       <div class="panel-header"><span>☁️ Synchronisation</span><button class="panel-close" id="sync-close-panel-btn">✕</button></div>
-      <div style="padding:16px;">
+      <div id="sync-panel-body">
         <h3>Mon identifiant Mynav</h3>
         <p>Saisis le même identifiant sur tous tes appareils pour synchroniser automatiquement tes favoris et ton historique.</p>
-        <div id="sync-id-display">Chargement...</div>
+        <div id="sync-id-display">...</div>
         <button id="sync-copy-btn">📋 Copier mon identifiant</button>
         <label id="sync-import-label">Utiliser un autre identifiant</label>
         <input type="text" id="sync-id-input" placeholder="Ex: manuelm, mynav2025..." />
         <button id="sync-import-btn">🔄 Changer d'identifiant</button>
+        <button id="sync-close-btn">Fermer</button>
       </div>
     </div>
 
@@ -315,149 +316,17 @@
     <div id="status">Recherche de votre position...</div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbzxeBp91zY7yO5MYsr79fZGrcZS8oluU",
-      authDomain: "mynav-90585.firebaseapp.com",
-      projectId: "mynav-90585",
-      storageBucket: "mynav-90585.firebasestorage.app",
-      messagingSenderId: "176162682026",
-      appId: "1:176162682026:web:331569f8e9250dcb2accd3"
-    };
-
-    const fbApp = initializeApp(firebaseConfig);
-    const db    = getFirestore(fbApp);
-
-    // Identifiant unique par utilisateur — généré une fois, stocké localement
-   let userId = localStorage.getItem('mynav_user_id');
-    if (!userId) {
-      // Demande un identifiant personnel au premier lancement
-      let chosenId = '';
-      while (!chosenId || chosenId.length < 4) {
-        chosenId = prompt(
-          '🧭 Bienvenue sur Mynav !\n\nChoisissez un identifiant personnel pour synchroniser vos données entre appareils.\n\nExemple : manuelm, mynav2025, votre prénom...\n(4 caractères minimum, sans espace)',
-          ''
-        );
-        if (chosenId === null) { chosenId = 'user_' + Date.now(); break; }
-        chosenId = chosenId.trim().toLowerCase().replace(/\s+/g, '_');
-      }
-      userId = chosenId;
-      localStorage.setItem('mynav_user_id', userId);
-    }
-
-    const syncStatus = document.getElementById('sync-status');
-    const syncIdDisplay = document.getElementById('sync-id-display');
-    syncIdDisplay.textContent = userId;
-
-    // Référence Firestore
-    const userDocRef = doc(db, 'users', userId);
-
-    // Sauvegarde dans Firestore
-    window.fbSave = async function(data) {
-      try {
-        syncStatus.textContent = '🔄';
-        await setDoc(userDocRef, data, { merge: true });
-        syncStatus.textContent = '☁️✓';
-        setTimeout(() => syncStatus.textContent = '☁️', 3000);
-      } catch(e) {
-        syncStatus.textContent = '☁️✗';
-        console.warn('Firebase save error:', e);
-      }
-    };
-
-    // Chargement depuis Firestore
-    window.fbLoad = async function() {
-      try {
-        const snap = await getDoc(userDocRef);
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.favorites) {
-            localStorage.setItem('mynav_favorites_v2', JSON.stringify(data.favorites));
-          }
-          if (data.history) {
-            localStorage.setItem('mynav_history', JSON.stringify(data.history));
-          }
-          return data;
-        }
-      } catch(e) {
-        console.warn('Firebase load error:', e);
-      }
-      return null;
-    };
-
-    // Sync depuis un autre identifiant
-    window.fbImport = async function(otherId) {
-      try {
-        syncStatus.textContent = '🔄';
-        const otherRef = doc(db, 'users', otherId);
-        const snap = await getDoc(otherRef);
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.favorites) localStorage.setItem('mynav_favorites_v2', JSON.stringify(data.favorites));
-          if (data.history)   localStorage.setItem('mynav_history', JSON.stringify(data.history));
-          // Sauvegarde aussi sous notre propre userId
-          await setDoc(userDocRef, data, { merge: true });
-          syncStatus.textContent = '☁️✓';
-          setTimeout(() => syncStatus.textContent = '☁️', 3000);
-          return true;
-        }
-        return false;
-      } catch(e) {
-        console.warn('Firebase import error:', e);
-        return false;
-      }
-    };
-
-    // Chargement initial
-    window.fbLoad().then(data => {
-      if (data) {
-        console.log('Données Firebase chargées');
-        // Déclenche le rendu des favoris si le panneau est ouvert
-        if (typeof window.renderFavPanel === 'function') window.renderFavPanel();
-      }
-    });
-
-    // Exposition de l'userId pour le panneau sync
-    window.mynavUserId = userId;
-
-    // Copier l'identifiant
-    document.getElementById('sync-copy-btn').onclick = () => {
-      navigator.clipboard.writeText(userId).then(() => {
-        document.getElementById('sync-copy-btn').textContent = '✅ Copié !';
-        setTimeout(() => document.getElementById('sync-copy-btn').textContent = '📋 Copier mon identifiant', 2000);
-      });
-    };
-
-    // Importer depuis un autre identifiant
-    document.getElementById('sync-import-btn').onclick = async () => {
-      const otherId = document.getElementById('sync-id-input').value.trim();
-      if (!otherId) { alert('Colle un identifiant valide'); return; }
-      document.getElementById('sync-import-btn').textContent = '🔄 Synchronisation...';
-      const ok = await window.fbImport(otherId);
-      if (ok) {
-        document.getElementById('sync-import-btn').textContent = '✅ Synchronisé !';
-        if (typeof window.renderFavPanel === 'function') window.renderFavPanel();
-        setTimeout(() => document.getElementById('sync-import-btn').textContent = '🔄 Synchroniser depuis cet identifiant', 2000);
-      } else {
-        document.getElementById('sync-import-btn').textContent = '❌ Identifiant introuvable';
-        setTimeout(() => document.getElementById('sync-import-btn').textContent = '🔄 Synchroniser depuis cet identifiant', 2000);
-      }
-    };
-
-  </script>
-
+  <!-- LEAFLET + RADARS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="radars.js"></script>
+
+  <!-- SCRIPT PRINCIPAL -->
   <script>
     // =============================================
     // CONFIGURATION — remplace COLLE_TA_CLE_ICI
     // =============================================
-    const ORS_API_KEY    = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImE0NmEzNDJjZjkyODQwMDA4MjhjZGE2YmM2ZWIyZWRkIiwiaCI6Im11cm11cjY0In0=';
-    const ALERT_DIST     = 700;
+    const ORS_API_KEY    = 'COLLE_TA_CLE_ICI';
+    const ALERT_DIST     = 500;
     const POI_RADIUS     = 5000;
     const RADAR_MIN_ZOOM = 10;
     const OVERPASS_URL   = 'https://overpass-api.de/api/interpreter';
@@ -528,6 +397,7 @@
     const speedLimit    = document.getElementById('speed-limit');
     const syncPanel     = document.getElementById('sync-panel');
     const syncStatus    = document.getElementById('sync-status');
+    const syncIdDisplay = document.getElementById('sync-id-display');
 
     // === ÉTAT ===
     let userPosition    = null;
@@ -546,6 +416,36 @@
     let isTracking      = true;
     let nearestRadarVMA = null;
 
+    // === FIREBASE SYNC (via module séparé) ===
+    // fbSave et fbLoad sont définis dans le module Firebase ci-dessous
+    // On initialise des stubs en attendant le chargement du module
+    window.fbSave = async () => {};
+    window.fbLoad = async () => null;
+    window.fbImport = async () => false;
+    window.mynavUserId = '';
+
+    // === IDENTIFIANT UTILISATEUR ===
+    function initUserId() {
+      let userId = localStorage.getItem('mynav_user_id');
+      if (!userId) {
+        let chosenId = '';
+        while (!chosenId || chosenId.length < 4) {
+          chosenId = prompt(
+            '🧭 Bienvenue sur Mynav !\n\nChoisissez un identifiant personnel pour synchroniser vos données entre appareils.\n\nExemple : manuelm, mynav2025...\n(4 caractères minimum, sans espace)',
+            ''
+          );
+          if (chosenId === null) { chosenId = 'user_' + Date.now(); break; }
+          chosenId = chosenId.trim().toLowerCase().replace(/\s+/g, '_');
+        }
+        userId = chosenId;
+        localStorage.setItem('mynav_user_id', userId);
+      }
+      window.mynavUserId = userId;
+      syncIdDisplay.textContent = userId;
+      return userId;
+    }
+    const currentUserId = initUserId();
+
     // === HISTORIQUE ===
     function getHistory() { try { return JSON.parse(localStorage.getItem('mynav_history')||'[]'); } catch(e) { return []; } }
     function addToHistory(result) {
@@ -553,8 +453,7 @@
       hist.unshift({ name: result.name, address: result.address||result.name, lat: result.lat, lon: result.lon, ts: Date.now() });
       if (hist.length > MAX_HISTORY) hist = hist.slice(0, MAX_HISTORY);
       localStorage.setItem('mynav_history', JSON.stringify(hist));
-      // Sync Firebase
-      if (window.fbSave) window.fbSave({ history: hist });
+      window.fbSave({ history: hist });
     }
 
     // === SUIVI ===
@@ -601,16 +500,34 @@
     };
 
     // === PANNEAU SYNC ===
-    syncStatus.onclick = () => {
-      const open = syncPanel.style.display !== 'none';
-      closeAllPanels();
-      if (!open) {
-        if (window.mynavUserId) document.getElementById('sync-id-display').textContent = window.mynavUserId;
-        syncPanel.style.display = 'block';
-      }
+    syncStatus.onclick = () => { const open=syncPanel.style.display!=='none'; closeAllPanels(); if(!open) syncPanel.style.display='block'; };
+    document.getElementById('sync-close-panel-btn').onclick = () => syncPanel.style.display='none';
+    document.getElementById('sync-close-btn').onclick = () => syncPanel.style.display='none';
+    document.getElementById('sync-copy-btn').onclick = () => {
+      navigator.clipboard.writeText(window.mynavUserId).then(()=>{
+        document.getElementById('sync-copy-btn').textContent='✅ Copié !';
+        setTimeout(()=>document.getElementById('sync-copy-btn').textContent='📋 Copier mon identifiant',2000);
+      });
     };
-    document.getElementById('sync-close-panel-btn').onclick = () => syncPanel.style.display = 'none';
-    document.getElementById('sync-close-btn').onclick = () => syncPanel.style.display = 'none';
+    document.getElementById('sync-import-btn').onclick = async () => {
+      const newId = document.getElementById('sync-id-input').value.trim().toLowerCase().replace(/\s+/g,'_');
+      if(!newId||newId.length<4){showStatus('Identifiant trop court (4 min)',2000);return;}
+      document.getElementById('sync-import-btn').textContent='🔄 Chargement...';
+      const ok = await window.fbImport(newId);
+      if(ok){
+        localStorage.setItem('mynav_user_id', newId);
+        window.mynavUserId = newId;
+        syncIdDisplay.textContent = newId;
+        window.renderFavPanel();
+        showStatus('✅ Synchronisé !',3000);
+      } else {
+        showStatus('Identifiant introuvable — un nouveau profil sera créé',3000);
+        localStorage.setItem('mynav_user_id', newId);
+        window.mynavUserId = newId;
+        syncIdDisplay.textContent = newId;
+      }
+      document.getElementById('sync-import-btn').textContent='🔄 Changer d\'identifiant';
+    };
 
     // === RECONNAISSANCE VOCALE ===
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -627,8 +544,8 @@
     const FAV_GROUPS = { 'Maison':{icon:'🏠',color:'#10b981'},'Travail':{icon:'💼',color:'#1a56db'},'Loisirs':{icon:'🎯',color:'#f59e0b'},'Autre':{icon:'📌',color:'#8b5cf6'} };
     function getFavorites() { try{return JSON.parse(localStorage.getItem('mynav_favorites_v2')||'[]');}catch(e){return[];} }
     function saveFavorites(f) {
-      try { localStorage.setItem('mynav_favorites_v2',JSON.stringify(f)); } catch(e) {}
-      if(window.fbSave) window.fbSave({ favorites: f });
+      try{localStorage.setItem('mynav_favorites_v2',JSON.stringify(f));}catch(e){}
+      window.fbSave({ favorites: f });
     }
 
     window.renderFavPanel = function() {
@@ -752,12 +669,14 @@
             map.setView([lat,lon],15);
             statusEl.textContent='Position trouvée ✓';
             setTimeout(()=>statusEl.style.display='none',2000);
-            fetchWeather();setTracking(true);
+            fetchWeather();
+            setTracking(true);
           }else{
-            userMarker.setLatLng([lat,lon]);userMarker.setIcon(carIcon);
+            userMarker.setLatLng([lat,lon]);
+            userMarker.setIcon(carIcon);
             updateNavFromPosition(lat,lon);
           }
-          if(isTracking)map.setView([lat,lon],map.getZoom(),{animate:true,duration:0.5});
+          if(isTracking) map.setView([lat,lon],map.getZoom(),{animate:true,duration:0.5});
           updateSpeedBubble(speed);
           checkRadarProximity(lat,lon);
         },
@@ -781,7 +700,6 @@
 
     function displayResults(results){
       resultsDiv.innerHTML='';
-      // Historique d'abord si champ vide
       const hist=getHistory();
       if(hist.length){
         const hdr=document.createElement('div');hdr.className='result-section-header';hdr.textContent='🕐 Récents';resultsDiv.appendChild(hdr);
@@ -819,7 +737,6 @@
       setTracking(false);
     }
 
-    // Afficher l'historique au focus si champ vide
     searchInput.addEventListener('focus',()=>{
       if(!searchInput.value.trim()){
         const hist=getHistory();
@@ -964,22 +881,94 @@
     poiCloseBtn.onclick   = ()=>poiPanel.style.display='none';
     poiCloseBtn2.onclick  = ()=>poiPanel.style.display='none';
     showRadars.onchange   = renderRadars;
-    map.on('click', (e) => {
-      // Ne ferme les panneaux que si le clic est sur la carte elle-même
-      // pas sur un élément flottant au-dessus
-      if (e.originalEvent.target.closest('#poi-panel, #fav-panel, #results, #nav-bubble, #sync-panel, #route-info, #speed-bubble, #recenter-btn')) return;
-      closeAllPanels();
-    });
+
+    // Empêche les clics dans les panneaux de fermer la carte
+    document.getElementById('poi-panel').addEventListener('click', (e)=>e.stopPropagation());
+    document.getElementById('fav-panel').addEventListener('click', (e)=>e.stopPropagation());
+    document.getElementById('results').addEventListener('click', (e)=>e.stopPropagation());
+    document.getElementById('sync-panel').addEventListener('click', (e)=>e.stopPropagation());
+    document.getElementById('nav-bubble').addEventListener('click', (e)=>e.stopPropagation());
+    document.getElementById('route-info').addEventListener('click', (e)=>e.stopPropagation());
+    document.getElementById('speed-bubble').addEventListener('click', (e)=>e.stopPropagation());
+    recenterBtn.addEventListener('click', (e)=>e.stopPropagation());
+
+    map.on('click', closeAllPanels);
     map.on('moveend', renderRadars);
     map.on('zoomend', renderRadars);
-    
-    document.getElementById('poi-panel').addEventListener('click', (e) => e.stopPropagation());
-    document.getElementById('fav-panel').addEventListener('click', (e) => e.stopPropagation());
-    document.getElementById('results').addEventListener('click', (e) => e.stopPropagation());
-    document.getElementById('sync-panel').addEventListener('click', (e) => e.stopPropagation());
 
     renderRadars();
   </script>
+
+  <!-- FIREBASE MODULE -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbzxeBp91zY7yO5MYsr79fZGrcZS8oluU",
+      authDomain: "mynav-90585.firebaseapp.com",
+      projectId: "mynav-90585",
+      storageBucket: "mynav-90585.firebasestorage.app",
+      messagingSenderId: "176162682026",
+      appId: "1:176162682026:web:331569f8e9250dcb2accd3"
+    };
+
+    const fbApp = initializeApp(firebaseConfig);
+    const db    = getFirestore(fbApp);
+    const syncStatusEl = document.getElementById('sync-status');
+
+    function getUserDocRef() {
+      const userId = localStorage.getItem('mynav_user_id') || window.mynavUserId;
+      return doc(db, 'users', userId);
+    }
+
+    window.fbSave = async function(data) {
+      try {
+        syncStatusEl.textContent = '🔄';
+        await setDoc(getUserDocRef(), data, { merge: true });
+        syncStatusEl.textContent = '☁️✓';
+        setTimeout(() => syncStatusEl.textContent = '☁️', 3000);
+      } catch(e) {
+        syncStatusEl.textContent = '☁️✗';
+        console.warn('Firebase save:', e);
+      }
+    };
+
+    window.fbLoad = async function() {
+      try {
+        const snap = await getDoc(getUserDocRef());
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.favorites) localStorage.setItem('mynav_favorites_v2', JSON.stringify(data.favorites));
+          if (data.history)   localStorage.setItem('mynav_history', JSON.stringify(data.history));
+          return data;
+        }
+      } catch(e) { console.warn('Firebase load:', e); }
+      return null;
+    };
+
+    window.fbImport = async function(otherId) {
+      try {
+        const snap = await getDoc(doc(db, 'users', otherId));
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.favorites) localStorage.setItem('mynav_favorites_v2', JSON.stringify(data.favorites));
+          if (data.history)   localStorage.setItem('mynav_history', JSON.stringify(data.history));
+          await setDoc(getUserDocRef(), data, { merge: true });
+          return true;
+        }
+        return false;
+      } catch(e) { console.warn('Firebase import:', e); return false; }
+    };
+
+    // Chargement initial depuis Firebase
+    window.fbLoad().then(data => {
+      if (data && typeof window.renderFavPanel === 'function') {
+        window.renderFavPanel();
+      }
+    });
+  </script>
+
   <script>
     if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').then(()=>console.log('SW ok')).catch(e=>console.warn('SW:',e));});}
   </script>
