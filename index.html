@@ -344,6 +344,8 @@
 
     // === CARTE ===
     const map = L.map('map', { zoomControl: true, maxZoom: 22 }).setView([46.603354, 1.888334], 6);
+    // Empêche Leaflet de clipper la carte rotée
+    map.getContainer().style.overflow = 'visible';
     let tileLayer = null;
 
     function isNightTime() { const h = new Date().getHours(); return h >= NIGHT_START || h < NIGHT_END; }
@@ -730,9 +732,19 @@
             updateNavFromPosition(lat,lon);
           }
 
-          // Suivi automatique de la carte
+          // Suivi automatique avec rotation selon le cap (mode navigation Waze)
           if (isTracking) {
-            map.setView([lat,lon], map.getZoom(), { animate: true, duration: 0.5 });
+            const currentZoom = map.getZoom();
+            if (heading !== null && !isNaN(heading) && currentZoom >= 17) {
+              // Rotation de la carte selon le cap GPS
+              map.getContainer().style.transformOrigin = 'center center';
+              const mapContainer = map.getContainer();
+              mapContainer.style.transform = `rotate(${-heading}deg)`;
+              map.setView([lat, lon], currentZoom, { animate: true, duration: 0.3 });
+            } else {
+              mapContainer.style.transform = '';
+              map.setView([lat, lon], currentZoom, { animate: true, duration: 0.5 });
+            }
           }
 
           // Mise à jour vitesse
