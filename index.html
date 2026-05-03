@@ -963,6 +963,11 @@
     });
     map.on('moveend', renderRadars);
     map.on('zoomend', renderRadars);
+    
+    document.getElementById('poi-panel').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('fav-panel').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('results').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('sync-panel').addEventListener('click', (e) => e.stopPropagation());
 
     renderRadars();
   </script>
