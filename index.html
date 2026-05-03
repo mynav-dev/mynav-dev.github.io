@@ -834,6 +834,11 @@
       searchInput.value = '';
       clearBtn.style.display = 'none';
       resultsDiv.style.display = 'none';
+      // Réinitialise la destination et le marqueur
+      destination = null;
+      currentResult = null;
+      if (searchMarker) { map.removeLayer(searchMarker); searchMarker = null; }
+      clearRoutes();
       searchInput.focus();
     };
 
