@@ -334,9 +334,19 @@
     const db    = getFirestore(fbApp);
 
     // Identifiant unique par utilisateur — généré une fois, stocké localement
-    let userId = localStorage.getItem('mynav_user_id');
+   let userId = localStorage.getItem('mynav_user_id');
     if (!userId) {
-      userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      // Demande un identifiant personnel au premier lancement
+      let chosenId = '';
+      while (!chosenId || chosenId.length < 4) {
+        chosenId = prompt(
+          '🧭 Bienvenue sur Mynav !\n\nChoisissez un identifiant personnel pour synchroniser vos données entre appareils.\n\nExemple : manuelm, mynav2025, votre prénom...\n(4 caractères minimum, sans espace)',
+          ''
+        );
+        if (chosenId === null) { chosenId = 'user_' + Date.now(); break; }
+        chosenId = chosenId.trim().toLowerCase().replace(/\s+/g, '_');
+      }
+      userId = chosenId;
       localStorage.setItem('mynav_user_id', userId);
     }
 
