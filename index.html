@@ -927,12 +927,12 @@
 
     window.fbSave = async function(data) {
       try {
-        syncStatusEl.textContent = '🔄';
+        document.getElementById('sync-label').textContent = '🔄';
         await setDoc(getUserDocRef(), data, { merge: true });
-        syncStatusEl.textContent = '☁️✓';
-        setTimeout(() => syncStatusEl.textContent = '☁️', 3000);
+        document.getElementById('sync-label').textContent = '☁️✓';
+        setTimeout(() => document.getElementById('sync-label').textContent = '☁️', 3000);
       } catch(e) {
-        syncStatusEl.textContent = '☁️✗';
+        document.getElementById('sync-label').textContent = '☁️✗';
         console.warn('Firebase save:', e);
       }
     };
